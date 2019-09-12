@@ -1,13 +1,15 @@
 #include "Node.h"
-#include <algorithm>
 using namespace std;
 
-Node::Node(State *s, string str, Node *n, int d)
+Node::Node(State *s, Move *str, int d)
 {
 	depth = d;
+	if(d&1)
+		eval = -1000000000;
+	else
+		eval = 1000000000;
 	state = s;
 	move = str;
-	parent = n;
 }
 
 Node::~Node()
@@ -17,7 +19,7 @@ Node::~Node()
 	children.clear();
 
 	delete state;
-	delete parent;
+	delete move;
 }
 
 void Node::addChild(Node *n)
@@ -25,7 +27,7 @@ void Node::addChild(Node *n)
 	children.push_back(n);
 }
 
-int Node::getEval()
+int Node::getStateEval()
 {
 	return state->getEval();
 }

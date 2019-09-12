@@ -1,11 +1,16 @@
+#include "Move.h"
 #include <vector>
+#include <algorithm>
+
 class Cannon
 {
 	public:
-		int p1, p2, p3;
-		Cannon(int a, int b, int c);
+		static int N, M, LIMIT;
+		static bool valid(int a);
+		int p1, p2, p3, id;
+		Cannon(int a, int b, int c, int i);
 		void moveTo(int k);
 		bool isCannonMove(int k);
 		bool isPresent(int k);
-		std::vector<int> getPossibleMoves();
+		std::vector<Move*> getPossibleMoves(std::vector<int> grid);
 };
