@@ -1,43 +1,59 @@
+#include "Tree.h"
 using namespace std;
+
+Tree::Tree(Node *n)
+{
+	root = n;
+	root->pruned = false;
+}
+
+Tree::~Tree()
+{
+	delete root;
+}
 
 void Tree::iterativeDeepening(Node *node, int tree_depth)
 {
-	for(int i =0; i<tree_depth; i++)
+	for(int i=0; i<tree_depth; ++i)
 	{
-		alphaBetaMinimax(node, true, i, NegInf, Inf);
+		alphaBetaMinimax(node, true, i, -1000000000, 1000000000);
 	}
 }
 
-void Tree::alphaBetaMinimax(Node * node, bool isMax, int itHt, int alpha, int beta){	
+void Tree::alphaBetaMinimax(Node *node, bool isMax, int itHt, int alpha, int beta)
+{	
 	if(itHt==0)
-		return node->getEval();
+	{
+		node->eval = node->getStateEval();
+		return;
+	}
 
-	int i =0;
-	for(; i<node->children.size(); i++)
+	int i=0;
+	for(; i<node->children.size(); ++i)
 	{
 		node->pruned = false;
-		alphaBetaMinimax(node->children[i], !isMax, itHt-1, node->alpha, node->beta);
+		alphaBetaMinimax(node->children[i], !isMax, itHt-1, alpha, beta);
 		node->children[i]->pruned = false;
 
 		int val = node->children[i]->eval;
 		if(isMax)
 		{
-			node->alpha = max(node->alpha, val);
+			alpha = max(alpha, val);
 			if(node->eval < val)
 				node->eval = val;
 		}
 		else
 		{
-			node->beta = min(node->beta, val);
+			beta = min(beta, val);
 			if(node->eval > val)
 				node->eval = val;
 		}
 
-		if(node->alpha >= node->beta)
+		if(alpha >= beta)
 			break;
 	}
 
-	for(; i<node->children.size(); i++)
+	for(; i<node->children.size(); ++i)
 	{
 		node->children[i]->pruned = true;
 	}

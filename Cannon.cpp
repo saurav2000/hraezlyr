@@ -1,6 +1,10 @@
 #include "Cannon.h"
 using namespace std;
 
+Cannon::N = 2;
+Cannon::M = 3;
+Cannon::LIMIT = 6;
+
 Cannon::Cannon(int a, int b, int c, int i)
 {
 	p1 = a;
@@ -32,17 +36,15 @@ void Cannon::moveTo(int k)
 	}
 }
 
-bool Cannon::isCannonMove(int k)
+bool Cannon::isCannonMove(int a, int k)
 {
-	if((p1-k)==(p2-p1)) return true;
-	if((k-p3)==(p2-p1)) return true;
-	return false;
+	return ((a==p1)&&((k-p3)==(p2-p1))) || ((a==p3)&&((p1-k)==(p2-p1)));
+
 }
 
 bool Cannon::isPresent(int k)
 {
-	if(p1==k||p2==k||p3==k) return true;
-	return false;
+	return p1==k||p2==k||p3==k;
 }
 
 bool Cannon::valid(int a)
@@ -54,21 +56,21 @@ vector<Move*> Cannon::getPossibleMoves(std::vector<int> grid)
 {
 	vector<Move*> res;
 	int d = p2-p1;
-	if(valid(p1-d))
+	if(valid(p1-d)&&grid[p1-d]==0)
 	{
-		res.push_back(new Move(p2, p1-d));
-		if(valid(p1-2*d))
+		res.push_back(new Move(p3, p1-d));
+		if(valid(p1-2*d)&&grid[p1-2*d]*id>=0)
 			res.push_back(new Move(p2, p1-2*d, true));
-		if(valid(p1-3*d))
+		if(valid(p1-3*d)&&grid[p1-3*d]*id>=0)
 			res.push_back(new Move(p2, p1-3*d, true));
 	}
 
-	if(valid(p3+d))
+	if(valid(p3+d)&&grid[p3+d]==0)
 	{
-		res.push_back(new Move(p2, p3+d));
-		if(valid(p3+2*d))
+		res.push_back(new Move(p1, p3+d));
+		if(valid(p3+2*d)&&grid[p3+2*d]*id>=0)
 			res.push_back(new Move(p2, p3+2*d, true));
-		if(valid(p3+3*d))
+		if(valid(p3+3*d)&&grid[p3+3*d]*id>=0)
 			res.push_back(new Move(p2, p3+3*d, true));
 	}
 	return res;

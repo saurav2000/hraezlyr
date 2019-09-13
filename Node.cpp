@@ -16,8 +16,6 @@ Node::~Node()
 {
 	for(int i = children.size();i>=0;--i)
 		delete children[i];
-	children.clear();
-
 	delete state;
 	delete move;
 }

@@ -1,9 +1,14 @@
 #include "State.h"
 using namespace std;
 
+State::N = 2;
+State::M = 3;
+State::LIMIT = 6;
+
 State::State(vector<int> ar)
 {
 	copy(ar.begin(), ar.end(), grid.begin());
+	cannons.reserve(10);
 }
 
 State::State(const State *s)
@@ -12,16 +17,59 @@ State::State(const State *s)
 	copy(s->cannons.begin(), s->cannons.end(), cannons.begin());
 }
 
-State* State::doMove(int x_i, int y_i, int x_f, int y_f, char m)
+State::State()
 {
+	grid.reserve(N*M);
+	cannons.reserve(10); //Approx max no of cannons
+}
+
+State* State::doMove(int x_i, int y_i, int x_f, int y_f, char m, int id)
+{
+	int p_i = x_i + N*y_i;
+	int p_f = x_f + N*y_f;
 	State *res = new State(this);
 	if(m=='M')
 	{
-		res->grid[x_f + M*y_f] = res->grid[x_i + M*y_i];
-		res->grid[x_i + M*y_i] = 0;
+		res->grid[p_f] = res->grid[p_i];
+		res->grid[p_i] = 0;
+
+		for(int i=cannons.size()-1;i>=0;--i)
+		{
+			//OPTIMIZE///////////////////////////////////////
+			bool del = false;
+			if(cannons[i].isPresent(p_i))
+			{	
+				//removal of cannons of initial pos
+				// if(!cannons[i].isCannonMove(p_i, p_f))
+					del = true;
+			}
+			//removal of cannons of final pos
+			if(cannons[i].isPresent(p_f))
+				del = true;
+
+			if(del)
+				cannons.erase(cannons.begin()+i);
+			/////////////////////////////////////////////////
+		}
+
+		for(int i=0;i<validCannonForms.size();i+=2)
+		{
+			if(valid(p_f+validCannonForms[i])&&valid(p_f+validCannonForms[i+1])&&grid[p_f+validCannonForms[i]]*id==1&&grid[p_f+validCannonForms[i+1]]*id==1)
+			{
+				Cannon temp(p_f, p_f+validCannonForms[i], p_f+validCannonForms[i+1], id);
+				cannons.push_back(temp);
+			}
+		}
 	}
 	else
-		res->grid[x_f + M*y_f] = 0;
+	{
+		res->grid[p_f] = 0;
+		for(int i=cannons.size()-1;i>=0;--i)
+		{
+			if(cannons[i].isPresent(p_f))
+				cannons.erase(cannons.begin()+i);
+		}	
+	}
 
 	return res;
 }
@@ -56,15 +104,17 @@ vector<Move*> State::getPossibleMoves(int id)
 
 		}
 
-		if(valid(i-1)&&grid[i-1]*id==-1)
+		if(valid(i-1)&&grid[i-1]*id<0)
 		{
 			res.push_back(new Move(i, i-1));
-			surr = true;
+			if(grid[i-1]*id==-1)
+				surr = true;
 		}
-		if(valid(i+1)&&grid[i+1]*id==-1)
+		if(valid(i+1)&&grid[i+1]*id<0)
 		{
 			res.push_back(new Move(i, i+1));
-			surr = true;
+			if(grid[i+1]*id==-1)
+				surr = true;
 		}
 		if(surr)
 		{
