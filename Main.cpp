@@ -13,29 +13,43 @@ State* initialise()
 	int moves[] = {-M, -M+1, -M-1};
 	validCannonForms.insert(validCannonForms.begin() , begin(directions), end(directions));
 	validMoves.insert(validMoves.begin(), begin(moves), end(moves));
-	int grid[LIMIT];
-
-	
-	for(int i =0; i<N; i++)
-		for(int j =0; j<M; j++)
-			grid[i*M+j] = 0;
+	int grid[LIMIT] = {0};
 				
-	for(int i =0 ; i <M; i= i+2)//white townhalls
-		grid[i] = -2;
+	for(int i=0; i<M; i+=2)
+	{
+		grid[i] = -2;//white townhalls
+		grid[(N-1)*M + i+1] = 2;//black townhalls
+	}	
+	
+	vector<int> temp(3);
+	vector<Cannon> cans;
+	cans.reserve(14);
+	for(int i=1; i<M; i+=2)//white pawns
+	{
+		for(int j=0; j<3; j++)
+		{
+			grid[j*M + i] = -1;
+			temp.push_back(j*M + i);
+		}
+		Cannon c(temp, -1);
+		cans.push_back(c);
+		temp.clear();
+	}
 		
-	for(int i =1 ; i <M; i= i+2)//black townhalls
-		grid[(N-1)*M + i] = 2;
-		
-	for(int i = 1; i<M; i= i+2)//white pawns
-		for(int j = 0; j < 3; j++)
-			grid[j*M + i]  = -1;
-		
-	for(int i = 0; i<M; i= i+2)//black pawns
-		for(int j = 0; j < 3; j++)
-			grid[(N-j-1)*M + i]  = 1;
+	for(int i=0; i<M; i+=2)//black pawns
+	{
+		for(int j=0; j<3; j++)
+		{
+			grid[(N-j-1)*M + i] = 1;
+			temp.push_back(j*M + i);
+		}
+		Cannon c(temp, 1);
+		cans.push_back(c);
+		temp.clear();	
+	}
 
 	State *state = new State(grid);
-
+	state->cannons = cans;
 	return state;
 }
 
