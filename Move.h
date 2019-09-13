@@ -1,6 +1,9 @@
 #include <string>
 #include <vector>
 
+extern int N, M, LIMIT;
+extern std::vector<int> validMoves, validCannonForms;
+
 class Move
 {
 	public:
@@ -11,6 +14,3 @@ class Move
 	Move(int x, int y);
 	std::string to_string(int n);
 };
-
-extern int N, M, LIMIT;
-extern std::vector<int> validMoves, validCannonForms;
