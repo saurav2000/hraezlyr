@@ -11,15 +11,8 @@ State::State(const State *s)
 {
 	grid.reserve(N*M);
 	cannons.reserve(14);
-	cerr<<"is it coming here\n";
 	grid.insert(grid.begin(), s->grid.begin(), s->grid.end());
-	cerr<<"is it coming here2\n";
 	cannons.insert(cannons.begin(), s->cannons.begin(), s->cannons.end());
-	
-	// copy(s->grid.begin(), s->grid.end(), grid.begin());
-	
-	// copy(s->cannons.begin(), s->cannons.end(), cannons.begin());
-	cerr<<"is it coming here3\n";
 }
 
 State::State()
@@ -30,22 +23,13 @@ State::State()
 
 State* State::doMove(int x_i, int y_i, int x_f, int y_f, char m, int id)
 {
-	int p_i = x_i + N*y_i;
-	int p_f = x_f + N*y_f;
-	return doMove(p_i, p_f, m, id);
-}
-
-State* State::doMove(int p_i, int p_f, char m, int id)
-{
-	cerr<<"Coming into function\n";
+	int p_i = x_i + M*y_i;
+	int p_f = x_f + M*y_f;
 	State *res = new State(this);
-	cerr<<"copying properly\n";
 	if(m=='M')
 	{
-		cerr<<p_i<<" "<<p_f<<"\n";
 		res->grid[p_f] = res->grid[p_i];
 		res->grid[p_i] = 0;
-		cerr<<"Hmm\n";
 		for(int i=res->cannons.size()-1;i>=0;--i)
 		{
 			// cerr<<"ayya lol"<<i<<"\n";
@@ -69,13 +53,12 @@ State* State::doMove(int p_i, int p_f, char m, int id)
 		for(int i=0;i<validCannonForms.size();i+=2)
 		{
 			// cerr<<"wtf is going on\n";
-			if(valid(p_f+validCannonForms[i])&&valid(p_f+validCannonForms[i+1])&&grid[p_f+validCannonForms[i]]*id==1&&grid[p_f+validCannonForms[i+1]]*id==1)
+			if(valid(x_f+validCannonFormsX[i], y_f+validCannonFormsY[i])&&valid(x_f+validCannonFormsX[i+1], y_f+validCannonFormsY[i+1])&&res->grid[p_f+validCannonForms[i]]*id==1&&res->grid[p_f+validCannonForms[i+1]]*id==1)
 			{
 				Cannon temp(p_f, p_f+validCannonForms[i], p_f+validCannonForms[i+1], id);
 				res->cannons.push_back(temp);
 			}
 		}
-		cerr<<"Out of cannon form loop\n";
 	}
 	else
 	{
@@ -86,8 +69,15 @@ State* State::doMove(int p_i, int p_f, char m, int id)
 				res->cannons.erase(res->cannons.begin()+i);
 		}	
 	}
-	cerr<<"ebfore return\n";
+	// for(int i =0; i< cannons.size(); i++)
+	// 	cerr << res->cannons[i].p1 << " "<< res->cannons[i].p2 << " "<< res->cannons[i].p3 <<" "<< res->cannons[i].id<< "\n";
+	// cerr<<"\n";
 	return res;
+}
+
+State* State::doMove(int p_i, int p_f, char m, int id)
+{
+	return doMove(p_i%M, p_i/M, p_f%M, p_f/M, m, id);
 }
 
 int State::getEval()
@@ -95,9 +85,9 @@ int State::getEval()
 	return 0;
 }
 
-bool State::valid(int a)
+bool State::valid(int a, int b)
 {
-	return a>=0&&a<LIMIT;
+	return a>=0&&a<M&&b>=0&&b<N;
 }
 
 vector<Move*> State::getPossibleMoves(int id)
@@ -107,11 +97,12 @@ vector<Move*> State::getPossibleMoves(int id)
 	{
 		if(grid[i]*id!=1)
 			continue;
+		int i_x = i%M, i_y = i/M;
 		bool surr = false;
 		for(int j=0;j<3;++j)
 		{
-			int t = i+validMoves[j]*id;
-			if(valid(t)&&grid[t]*id!=1)
+			int t_x = i_x+(j-1), t_y = i_y-id, t = t_x + M*t_y;
+			if(valid(t_x, t_y)&&grid[t]*id!=1)
 			{
 				res.push_back(new Move(i, t));
 				if(grid[t]*id==-1)
@@ -120,13 +111,13 @@ vector<Move*> State::getPossibleMoves(int id)
 
 		}
 
-		if(valid(i-1)&&grid[i-1]*id<0)
+		if(valid(i_x-1, i_y)&&grid[i-1]*id<0)
 		{
 			res.push_back(new Move(i, i-1));
 			if(grid[i-1]*id==-1)
 				surr = true;
 		}
-		if(valid(i+1)&&grid[i+1]*id<0)
+		if(valid(i_x+1, i_y)&&grid[i+1]*id<0)
 		{
 			res.push_back(new Move(i, i+1));
 			if(grid[i+1]*id==-1)
@@ -134,10 +125,12 @@ vector<Move*> State::getPossibleMoves(int id)
 		}
 		if(surr)
 		{
-			if(valid(i+(2*(N+1)*id))&&grid[i+(2*(N+1)*id)]*id<=0)
-				res.push_back(new Move(i, i+((N+1)*id)));
-			if(valid(i+(2*(N-1)*id))&&grid[i+(2*(N-1)*id)]*id<=0)
-				res.push_back(new Move(i, i+((N-1)*id)));
+			if(valid(i_x-2, i_y+2*id)&&grid[i+(2*(M*id -1))]*id<=0)
+				res.push_back(new Move(i, i+(2*(M*id -1))));
+			if(valid(i_x, i_y+2*id)&&grid[i+(2*(M*id))]*id<=0)
+				res.push_back(new Move(i, i+(2*(M*id))));
+			if(valid(i_x+2, i_y+2*id)&&grid[i+(2*(M*id +1))]*id<=0)
+				res.push_back(new Move(i, i+(2*(M*id +1))));
 		}
 	}
 

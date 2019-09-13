@@ -4,14 +4,17 @@
 using namespace std;
 
 int id, N , M , LIMIT, time_limit;
-std::vector<int> validMoves, validCannonForms;
+std::vector<int> validCannonForms, validCannonFormsX, validCannonFormsY;
 
 State* initialise()
 {
-	int directions[] = {1, 2, -1, -2, M, 2*M, -2*M, -1*M, M+1, 2*M+2, M-1, 2*M-2, 1-M, 2-2*M, -1-M, -2-2*M, 1, -1, M, -1*M, M+1, -1-M, M-1, 1-M};	
-	int moves[] = {-M, -M+1, -M-1};
+	int directions[] = {1, 2, -1, -2, M, 2*M, -2*M, -1*M, M+1, 2*M+2, M-1, 2*M-2, 1-M, 2-2*M, -1-M, -2-2*M, 1, -1, M, -1*M, M+1, -1-M, M-1, 1-M};
+	int directionsX[] = {1, 2, -1, -2, 0, 0, 0, 0, 1, 2, -1, -2, 1, 2, -1, -2, 1, -1, 0, 0, 1, -1, -1, 1};
+	int directionsY[] = {0, 0, 0, 0, 1, 2, -2, -1, 1, 2, 1, 2, -1, -2, -1, -2, 0, 0, 1, -1, 1, -1, 1, -1};
+
 	validCannonForms.insert(validCannonForms.begin() , begin(directions), end(directions));
-	validMoves.insert(validMoves.begin(), begin(moves), end(moves));
+	validCannonFormsX.insert(validCannonFormsX.begin() , begin(directionsX), end(directionsX));
+	validCannonFormsY.insert(validCannonFormsY.begin() , begin(directionsY), end(directionsY));
 	int grid[LIMIT] = {0};
 	// for (int i = 0; i < N; ++i)
 	// {
@@ -27,7 +30,7 @@ State* initialise()
 		grid[(N-1)*M + i+1] = 2;//black townhalls
 	}	
 	
-	vector<int> temp(3);
+	vector<int> temp;
 	vector<Cannon> cans;
 	cans.reserve(14);
 	for(int i=1; i<M; i+=2)//white pawns
@@ -47,7 +50,7 @@ State* initialise()
 		for(int j=0; j<3; j++)
 		{
 			grid[(N-j-1)*M + i] = 1;
-			temp.push_back(j*M + i);
+			temp.push_back((N-j-1)*M + i);
 		}
 		Cannon c(temp, 1);
 		cans.push_back(c);
@@ -68,10 +71,8 @@ int main()
 	cerr<<id<<" "<<LIMIT<<" "<<N<<" "<<M<<" "<<"\n";
 
 	State *state = initialise();
-	cerr<<"initialised\n";
 	std::random_device dev;
 	std::mt19937 rng(dev());
-	cerr<<"ayyayuadkasdjaskjdhajksdh\n";
 	char m;
 	int x_i, x_f, y_i, y_f;
 
@@ -79,31 +80,25 @@ int main()
 	{
 		cin>>m ;
 		cin>>x_i>>y_i>>m>>x_f>>y_f;
-		cerr<<"Ikadikanna vasthunda\n";
 		state = state->doMove(x_i, y_i, x_f, y_f, m, 1);
-		cerr<<"DoMove woeking properly\n";
+		cerr<<"He played and "<<state->cannons.size()<<"\n";
 	}
 	
 
 	while(true)
 	{
 		std::vector<Move*> possibleMoves = state->getPossibleMoves(id);
-		cerr<<"getPossibleMoves woeking properly\n";
 		std::uniform_int_distribution<std::mt19937::result_type> dist6(0,possibleMoves.size()-1); // distribution in range [1, 6]
 		int rand = dist6(rng);
-		cerr<<possibleMoves.size()<<" "<<rand<<"\n";
 		Move *move = possibleMoves[rand];
-		cerr<<"okay\n";
-		cerr<<move->bomb<<" "<<move->i<<" "<<move->f<<"\n";
-		cerr<<"printing\n";
 		m = (move->bomb)? 'B' : 'M';
-		state = state->doMove(move->i, move->f, m, id);
-		cerr<<"uhuh\n";
 		cout<<move->toString(N)<<"\n";
-		cerr<<"wtfff\n";
+		state = state->doMove(move->i, move->f, m, id);
+		cerr<<"I played and "<<state->cannons.size()<<"\n";
 		cin>>m ;
 		cin>>x_i>>y_i>>m>>x_f>>y_f;
 		state = state->doMove(x_i, y_i, x_f, y_f, m, -id);
+		cerr<<"He played and "<<state->cannons.size()<<"\n";
 	}
 
 	return 0;

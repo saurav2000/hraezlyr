@@ -13,5 +13,5 @@ class State
 	State* doMove(int p_i, int p_f, char m, int id);
 	int getEval();
 	std::vector<Move*> getPossibleMoves(int id);
-	static bool valid(int a);
+	static bool valid(int a, int b);
 };

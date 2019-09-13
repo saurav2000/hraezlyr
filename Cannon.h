@@ -5,7 +5,7 @@ class Cannon
 {
 	public:
 	
-	static bool valid(int a);
+	static bool valid(int a, int b);
 	int p1, p2, p3, id;
 	Cannon(int a, int b, int c, int i);
 	Cannon(std::vector<int> v, int i);

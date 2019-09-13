@@ -3,7 +3,7 @@
 #include <iostream>
 
 extern int N, M, LIMIT;
-extern std::vector<int> validMoves, validCannonForms;
+extern std::vector<int> validCannonForms, validCannonFormsX, validCannonFormsY;
 
 class Move
 {
