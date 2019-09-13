@@ -4,7 +4,7 @@ using namespace std;
 State::State(int ar[])
 {
 	grid.insert(grid.begin(), ar, ar + LIMIT);
-	cannons.reserve(10);
+	cannons.reserve(14);
 }
 
 State::State(const State *s)
@@ -16,7 +16,7 @@ State::State(const State *s)
 State::State()
 {
 	grid.reserve(N*M);
-	cannons.reserve(10); //Approx max no of cannons
+	cannons.reserve(14); //Approx max no of cannons
 }
 
 State* State::doMove(int x_i, int y_i, int x_f, int y_f, char m, int id)
