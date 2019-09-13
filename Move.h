@@ -1,4 +1,5 @@
 #include <string>
+#include <vector>
 
 class Move
 {
@@ -10,3 +11,6 @@ class Move
 	Move(int x, int y);
 	std::string to_string(int n);
 };
+
+extern int N, M, LIMIT;
+extern std::vector<int> validMoves, validCannonForms;

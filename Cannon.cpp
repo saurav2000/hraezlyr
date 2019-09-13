@@ -1,9 +1,9 @@
 #include "Cannon.h"
 using namespace std;
 
-Cannon::N = 2;
-Cannon::M = 3;
-Cannon::LIMIT = 6;
+// Cannon::N = 2;
+// Cannon::M = 3;
+//Cannon::LIMIT = 6;
 
 Cannon::Cannon(int a, int b, int c, int i)
 {
