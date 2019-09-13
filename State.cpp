@@ -1,14 +1,8 @@
 #include "State.h"
-#include <vector>
 using namespace std;
 
-// State::N = 2;
-// State::M = 3;
-// State::LIMIT = 6;
-
-State::State(int ar[])//can we change ar to array
+State::State(int ar[])
 {
-	//copy(begin(ar), end(ar), begin(grid));
 	grid.insert(grid.begin(), ar, ar + LIMIT);
 	cannons.reserve(10);
 }
@@ -34,7 +28,6 @@ State* State::doMove(int x_i, int y_i, int x_f, int y_f, char m, int id)
 
 State* State::doMove(int p_i, int p_f, char m, int id)
 {
-	
 	State *res = new State(this);
 	if(m=='M')
 	{
