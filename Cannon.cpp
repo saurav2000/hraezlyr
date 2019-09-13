@@ -16,6 +16,21 @@ Cannon::Cannon(int a, int b, int c, int i)
 		swap(p2,p3);
 }
 
+Cannon::Cannon(vector<int> v, int i)
+{
+	p1 = v[0];
+	p2 = v[1];
+	p3 = v[2];
+	id = i;
+
+	if(p1>p3)
+		swap(p1,p3);
+	if(p1>p2)
+		swap(p1,p2);
+	if(p2>p3)
+		swap(p2,p3);	
+}
+
 void Cannon::moveTo(int k)
 {
 	if(k>p3)
