@@ -1,5 +1,4 @@
 #include "Tree.h"
-#include <iostream>
 #include <chrono>
 #include <random>
 using namespace std;
@@ -14,6 +13,13 @@ State* initialise()
 	validCannonForms.insert(validCannonForms.begin() , begin(directions), end(directions));
 	validMoves.insert(validMoves.begin(), begin(moves), end(moves));
 	int grid[LIMIT] = {0};
+	// for (int i = 0; i < N; ++i)
+	// {
+	// 	for (int j = 0; j < M; ++j)
+	// 	{
+	// 		grid[8*i+j] = 0;
+	// 	}
+	// }
 				
 	for(int i=0; i<M; i+=2)
 	{
@@ -55,13 +61,17 @@ State* initialise()
 
 int main()
 {
-	cin>>id>>N>>M>>time_limit;
+	cin >> id >> N >> M >> time_limit;
+	LIMIT = N*M;
+	id--;
 	id = 1-id*2;
+	cerr<<id<<" "<<LIMIT<<" "<<N<<" "<<M<<" "<<"\n";
 
 	State *state = initialise();
-
+	cerr<<"initialised\n";
 	std::random_device dev;
 	std::mt19937 rng(dev());
+	cerr<<"ayyayuadkasdjaskjdhajksdh\n";
 	char m;
 	int x_i, x_f, y_i, y_f;
 
@@ -69,25 +79,31 @@ int main()
 	{
 		cin>>m ;
 		cin>>x_i>>y_i>>m>>x_f>>y_f;
-		state->doMove(x_i, y_i, x_f, y_f, m, 1);
+		cerr<<"Ikadikanna vasthunda\n";
+		state = state->doMove(x_i, y_i, x_f, y_f, m, 1);
+		cerr<<"DoMove woeking properly\n";
 	}
 	
 
 	while(true)
 	{
 		std::vector<Move*> possibleMoves = state->getPossibleMoves(id);
+		cerr<<"getPossibleMoves woeking properly\n";
 		std::uniform_int_distribution<std::mt19937::result_type> dist6(0,possibleMoves.size()-1); // distribution in range [1, 6]
 		int rand = dist6(rng);
+		cerr<<possibleMoves.size()<<" "<<rand<<"\n";
 		Move *move = possibleMoves[rand];
+		cerr<<"okay\n";
+		cerr<<move->bomb<<" "<<move->i<<" "<<move->f<<"\n";
+		cerr<<"printing\n";
 		m = (move->bomb)? 'B' : 'M';
-		state->doMove(move->i, move->f, m, id);
-		cout<<move->to_string(N)<<"\n";
-
+		state = state->doMove(move->i, move->f, m, id);
+		cerr<<"uhuh\n";
+		cout<<move->toString(N)<<"\n";
+		cerr<<"wtfff\n";
 		cin>>m ;
 		cin>>x_i>>y_i>>m>>x_f>>y_f;
-		state->doMove(x_i, y_i, x_f, y_f, m, id*-1);
-
-		break;
+		state = state->doMove(x_i, y_i, x_f, y_f, m, -id);
 	}
 
 	return 0;

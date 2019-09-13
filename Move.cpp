@@ -15,7 +15,7 @@ Move::Move(int a, int b)
 	bomb = false;
 }
 
-string Move::to_string(int n)
+string Move::toString(int n)
 {
 	string res = "S ";
 	res+=to_string(i%n)+" "+to_string(i/n)+" ";
