@@ -1,5 +1,4 @@
 #include "Tree.h"
-#include <chrono>
 #include <random>
 using namespace std;
 
@@ -70,7 +69,7 @@ int main()
 	id = 1-id*2;
 	cerr<<id<<" "<<LIMIT<<" "<<N<<" "<<M<<" "<<"\n";
 
-	State *state = initialise();
+	State *mainState = initialise();
 	std::random_device dev;
 	std::mt19937 rng(dev());
 	char m;
@@ -80,25 +79,25 @@ int main()
 	{
 		cin>>m ;
 		cin>>x_i>>y_i>>m>>x_f>>y_f;
-		state = state->doMove(x_i, y_i, x_f, y_f, m, 1);
-		cerr<<"He played and "<<state->cannons.size()<<"\n";
+		mainState = mainState->doMove(x_i, y_i, x_f, y_f, m, 1);
+		// cerr<<"He played and "<<mainState->cannons.size()<<"\n";
 	}
 	
 
 	while(true)
 	{
-		std::vector<Move*> possibleMoves = state->getPossibleMoves(id);
+		Node *n = new Node(mainState, NULL, 0);
+		std::vector<Move*> possibleMoves = mainState->getPossibleMoves(id);
 		std::uniform_int_distribution<std::mt19937::result_type> dist6(0,possibleMoves.size()-1); // distribution in range [1, 6]
 		int rand = dist6(rng);
 		Move *move = possibleMoves[rand];
-		m = (move->bomb)? 'B' : 'M';
 		cout<<move->toString(N)<<"\n";
-		state = state->doMove(move->i, move->f, m, id);
-		cerr<<"I played and "<<state->cannons.size()<<"\n";
+		mainState = mainState->doMove(move, id);
+		// cerr<<"I played and "<<mainState->cannons.size()<<"\n";
 		cin>>m ;
 		cin>>x_i>>y_i>>m>>x_f>>y_f;
-		state = state->doMove(x_i, y_i, x_f, y_f, m, -id);
-		cerr<<"He played and "<<state->cannons.size()<<"\n";
+		mainState = mainState->doMove(x_i, y_i, x_f, y_f, m, -id);
+		// cerr<<"He played and "<<mainState->cannons.size()<<"\n";
 	}
 
 	return 0;
