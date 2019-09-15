@@ -1,10 +1,11 @@
 #include "Tree.h"
 using namespace std;
 
-Tree::Tree(Node *n)
+Tree::Tree(Node *n, int i)
 {
 	root = n;
 	root->pruned = false;
+	id = i;
 }
 
 Tree::~Tree()
@@ -27,6 +28,9 @@ void Tree::alphaBetaMinimax(Node *node, bool isMax, int itHt, int alpha, int bet
 		node->eval = node->getStateEval();
 		return;
 	}
+
+	if(node->hasNoChildren())
+		node->buildChildren(id);
 
 	int i=0;
 	for(; i<node->children.size(); ++i)
