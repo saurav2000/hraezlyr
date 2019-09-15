@@ -21,6 +21,12 @@ State::State()
 	cannons.reserve(14); //Approx max no of cannons
 }
 
+State::~State()
+{
+	grid.clear();
+	cannons.clear();
+}
+
 State* State::doMove(int x_i, int y_i, int x_f, int y_f, char m, int id)
 {
 	int p_i = x_i + M*y_i;
@@ -78,6 +84,11 @@ State* State::doMove(int x_i, int y_i, int x_f, int y_f, char m, int id)
 State* State::doMove(int p_i, int p_f, char m, int id)
 {
 	return doMove(p_i%M, p_i/M, p_f%M, p_f/M, m, id);
+}
+
+State* State::doMove(Move *m, int id)
+{
+	return doMove(m->i, m->f, m->bomb?'B':'M', id);
 }
 
 int State::getEval()
