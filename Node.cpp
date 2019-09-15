@@ -26,9 +26,9 @@ void Node::addChild(Node *n)
 	children.push_back(n);
 }
 
-int Node::getStateEval()
+int Node::getStateEval(int id)
 {
-	return state->getEval();
+	return state->getEval(int id);
 }
 
 bool compA(Node *n1, Node *n2)

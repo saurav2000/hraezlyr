@@ -91,9 +91,62 @@ State* State::doMove(Move *m, int id)
 	return doMove(m->i, m->f, m->bomb?'B':'M', id);
 }
 
-int State::getEval()
+int State::getEval(int id)
 {
-	return 0;
+	int w_t = 10, w_s = 1, w_ms = 1, w_mc = 1, w_bc = 1, w_as = 1;
+	int eval = 0;
+	int del_t = 0, det_s = 0, del_c = 0, del_ms = 0, del_mc = 0, del_bc = 0, del_as = 0;
+
+	for(int i =0; i<LIMIT; i++){
+		if(grid[i] == -1)//white soilder
+			del_s = del_s - 1;
+		if(grid[i] == 1)//black soilder
+			del_s = del_s + 1;
+		if(grid[i] == -2)//white townhall
+			del_t = del_t - 1;
+		if(grid[i] == 2)//black townhall
+			del_t = del_t + 1;
+	}
+		
+	eval = (w_t*del_t) + (w_s * del_s);
+
+	for(int i =0; i< this.cannons.size(); i++){
+		del_c += cannons.id;
+	}
+
+	eval += (w_c * del_c);
+
+	vector<Move*> whiteMoves = this.getPossibleMoves(1);
+	for(int i = 0; i<whiteMoves.size(); i++)
+	{
+		bool bomb = whiteMoves[i].bomb, cannon = whiteMoves[i].cannon;
+		if(bomb && cannon)
+			del_bc--;
+		else if(!bomb && cannon)
+			del_mc--;
+		else if(!bomb && !cannon)
+			del_ms--;
+		else if(bomb && !cannon)
+			del_as--;
+	}
+
+	vector<Move*> blackMoves = this.getPossibleMoves(-1);
+	for(int i = 0; i<blackMoves.size(); i++)
+	{
+		bool bomb = blackMoves[i].bomb, cannon = blackMoves[i].cannon;
+		if(bomb && cannon)
+			del_bc++;
+		else if(!bomb && cannon)
+			del_mc++;
+		else if(!bomb && !cannon)
+			del_ms++;
+		else if(bomb && !cannon)
+			del_as++;
+	}
+	
+	eval += (w_ms * del_ms) +(w_mc * del_mc) + (w_bc * del_bc) +(w_as * del_as);
+	
+	return id * eval;
 }
 
 bool State::valid(int a, int b)

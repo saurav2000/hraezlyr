@@ -10,8 +10,9 @@ class Move
 	public:
 	
 	int i, f;
-	bool bomb;
-	Move(int x, int y, bool b);
+	bool bomb, cannon;
+	Move(int x, int y, bool b, bool cannon);
+	Move(int x, int y, bool cannon);
 	Move(int x, int y);
 	std::string toString(int n);
 };

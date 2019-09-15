@@ -25,7 +25,7 @@ void Tree::alphaBetaMinimax(Node *node, bool isMax, int itHt, int alpha, int bet
 {	
 	if(itHt==0)
 	{
-		node->eval = node->getStateEval();
+		node->eval = node->getStateEval(id);
 		return;
 	}
 

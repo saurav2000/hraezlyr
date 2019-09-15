@@ -72,20 +72,20 @@ vector<Move*> Cannon::getPossibleMoves(std::vector<int> grid)
 	int d = p2-p1;
 	if(valid(p1_x-d_x, p1_y-d_y)&&grid[p1-d]==0)
 	{
-		res.push_back(new Move(p3, p1-d));
+		res.push_back(new Move(p3, p1-d, true));
 		if(valid(p1_x-2*d_x, p1_y-2*d_y)&&grid[p1-2*d]*id<=0)
-			res.push_back(new Move(p2, p1-2*d, true));
+			res.push_back(new Move(p2, p1-2*d, true, true));
 		if(valid(p1_x-3*d_x, p1_y-3*d_y)&&grid[p1-3*d]*id<=0)
-			res.push_back(new Move(p2, p1-3*d, true));
+			res.push_back(new Move(p2, p1-3*d, true, true));
 	}
 
 	if(valid(p3_x+d_x, p3_y+d_y)&&grid[p3+d]==0)
 	{
-		res.push_back(new Move(p1, p3+d));
+		res.push_back(new Move(p1, p3+d, true));
 		if(valid(p3_x+2*d_x, p3_y+2*d_y)&&grid[p3+2*d]*id<=0)
-			res.push_back(new Move(p2, p3+2*d, true));
+			res.push_back(new Move(p2, p3+2*d, true, true));
 		if(valid(p3_x+3*d_x, p3_y+3*d_y)&&grid[p3+3*d]*id<=0)
-			res.push_back(new Move(p2, p3+3*d, true));
+			res.push_back(new Move(p2, p3+3*d, true, true));
 	}
 	return res;
 }

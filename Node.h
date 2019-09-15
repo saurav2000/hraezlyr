@@ -12,7 +12,7 @@ class Node
 	Node(State *s, Move *str, int d);
 	~Node();
 	void addChild(Node *n);
-	int getStateEval();
+	int getStateEval(int id);
 	void sortChildrenAscending();
 	void sortChildrenDescending();
 	bool hasNoChildren();

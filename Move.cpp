@@ -1,11 +1,20 @@
 #include "Move.h"
 using namespace std;
 
-Move::Move(int a, int b, bool z)
+Move::Move(int a, int b, bool z, bool y)
 {
 	i = a;
 	f = b;
 	bomb = z;
+	cannon = y;
+}
+
+Move::Move(int a, int b, bool z)
+{
+	i = a;
+	f = b;
+	cannon = z;
+	bomb = false;
 }
 
 Move::Move(int a, int b)
@@ -13,6 +22,7 @@ Move::Move(int a, int b)
 	i = a;
 	f = b;
 	bomb = false;
+	cannon = false;
 }
 
 string Move::toString(int n)
