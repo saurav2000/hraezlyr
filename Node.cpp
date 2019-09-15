@@ -8,6 +8,7 @@ Node::Node(State *s, Move *str, int d)
 		eval = -1000000000;
 	else
 		eval = 1000000000;
+	pruned = false;
 	state = s;
 	move = str;
 }
@@ -48,4 +49,17 @@ void Node::sortChildrenAscending()
 void Node::sortChildrenDescending()
 {
 	sort(children.begin(), children.end(), compD);
+}
+
+void Node::buildChildren(int ID)
+{
+	int id = (1 - 2*(depth%2))*ID;
+	vector<Move*> v = state->getPossibleMoves(id);
+	for(int i=0;i<v.size();++i)
+		this->addChild(new Node(state->doMove(v[i], id), v[i], d+1));
+}
+
+bool Node::hasNoChildren()
+{
+	return children.empty();
 }
