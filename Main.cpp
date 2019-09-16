@@ -103,7 +103,7 @@ int main()
 			ply = 6;
 		if(b <= 20)
 			ply = 5;
-		else if(b <= 30)
+		else if(b <= 28)
 			ply = 4;
 		delete tree;
 		

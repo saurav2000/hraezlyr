@@ -112,71 +112,81 @@ State* State::doMove(Move *m, int id)
 int State::getEval(int id)
 {
 	// int w_t = 2000, w_s = 300, w_non_hb = 25, w_hb = 5, w_at_b = 50, w_uat_b = -10, w_as = 20, w_mb = 10;
-	int w_t = 2000, w_s = 300, w_non_hb = 20, w_hb = 10, w_at_b = 50, w_uat_b = 0, w_as = 20, w_mb = 10;
+	//int w_t = 2000, w_s = 300, w_non_hb = 20, w_hb = 10, w_at_b = 50, w_uat_b = 0, w_as = 20, w_mb = 10;
+	int w_t = 250, w_s = 80, w_as = 5, w_a_nhc = 10 , w_a_hc = 10, w_rs = 3;
+	// int w_t = 200, w_s = 40, w_as = 1, w_a_nhc = 8, w_a_hc = 4, w_rs = 1;
 	int eval = 0;
-	int del_t = 0, del_s = 0, del_as = 0;// del_c = 0, del_ms = 0, del_mc = 0, del_bc = 0, del_as = 0;
+	int del_t = 0, del_s = 0, del_as = 0, del_a_nhc = 0, del_a_hc = 0, del_rs = 0;// del_c = 0, del_ms = 0, del_mc = 0, del_bc = 0, del_as = 0;
 
 	del_s = num[0] - num[1];
 	del_t = num[2] - num[3];
-	eval = (w_t*del_t) + (w_s * del_s);
+	eval = ((w_t*del_t) + (w_s * del_s))*id;
 
 	// eval += (w_c * del_c);
-	int hb =0, non_hb = 0, at_b = 0, uat_b = 0;
+	//int hb =0, non_hb = 0, at_b = 0, uat_b = 0;
 	vector<Move*> whiteMoves = getPossibleMoves(-1);
 	for(int i = 0; i<whiteMoves.size(); i++)
 	{
-		// bool bomb = whiteMoves[i]->bomb, cannon = whiteMoves[i]->cannon;
-		// int f = whiteMoves[i]->f;
-		// if(bomb && cannon && grid[f] > 0)
-		// 	del_bc--;
-		// else if(!bomb && cannon)
-		// 	del_mc--;
 		if(!whiteMoves[i]->cannon && grid[whiteMoves[i]->f] > 0)
-			del_as--;
-		// else if(!cannon && grid[f] == 0)
-		// 	del_ms--;
-		if(!whiteMoves[i]->bomb)
+			--del_as;
+		if(!whiteMoves[i]->cannon && ((whiteMoves[i]->f/M) - (whiteMoves[i]->i/M))<0)
+			--del_rs;
+		
+		if(!whiteMoves[i]->cannon || grid[whiteMoves[i]->f]==0)//no attack
 			continue;
-		if(grid[whiteMoves[i]->f]!=0)
-			--at_b;
-		else
-			--uat_b;
+
 		if(whiteMoves[i]->isHorizontal())
-			--hb;
+			--del_a_hc;
 		else 
-			--non_hb;
+			--del_a_nhc;
 	}
 
 	vector<Move*> blackMoves = getPossibleMoves(1);
 	for(int i = 0; i<blackMoves.size(); i++)
 	{
-		// bool bomb = blackMoves[i]->bomb, cannon = blackMoves[i]->cannon;
-		// int f = blackMoves[i]->f;
-		// if(bomb && cannon && grid[f]<0)
-		// 	del_bc++;
-		// else if(!bomb && cannon)
-		// 	del_mc++;
-		// else if(!cannon && grid[f] == 0)
-		// 	del_ms++;
-		if(!blackMoves[i]->cannon && grid[blackMoves[i]->f] < 0)
-			del_as++;
-		if(!blackMoves[i]->bomb)
+		if(!blackMoves[i]->cannon && grid[blackMoves[i]->f]<0)
+			++del_as;
+		if(!blackMoves[i]->cannon && ((blackMoves[i]->f)/M - (blackMoves[i]->i)/M)>0)
+			++del_rs;
+		
+		if(!blackMoves[i]->cannon || grid[blackMoves[i]->f]==0)//no attack
 			continue;
-		if(grid[blackMoves[i]->f]!=0)
-			++at_b;
-		else
-			++uat_b;
+
 		if(blackMoves[i]->isHorizontal())
-			++hb;
+			++del_a_hc;
 		else 
-			++non_hb;
+			++del_a_nhc;
+
+		// // bool bomb = blackMoves[i]->bomb, cannon = blackMoves[i]->cannon;
+		// // int f = blackMoves[i]->f;
+		// // if(bomb && cannon && grid[f]<0)
+		// // 	del_bc++;
+		// // else if(!bomb && cannon)
+		// // 	del_mc++;
+		// // else if(!cannon && grid[f] == 0)
+		// // 	del_ms++;
+		// if(!blackMoves[i]->cannon && grid[blackMoves[i]->f] < 0)
+		// 	del_as++;
+		// if(!blackMoves[i]->bomb)
+		// 	continue;
+		// if(grid[blackMoves[i]->f]!=0)
+		// 	++at_b;
+		// else
+		// 	++uat_b;
+		// if(blackMoves[i]->isHorizontal())
+		// 	++hb;
+		// else 
+		// 	++non_hb;
 	}
-	int del_mb = (int)blackMoves.size() - (int)whiteMoves.size() ;
-	eval += (hb*w_non_hb) +(w_hb*hb) + (w_at_b*at_b) + (w_uat_b*uat_b) + (w_mb*del_mb)+ (w_as * del_as);
-	// cerr << id*eval << " " <<  del_t << " " << del_s << " " << hb << " " <<  non_hb  << " " <<  at_b << "\n";
-	// eval += (w_ms * del_ms) +(w_mc * del_mc) + (w_bc * del_bc) +(w_as * del_as);
-	// cerr <<del_t <<" "<< del_s <<" "<< del_c <<" "<< del_ms <<" "<< del_mc <<" "<< del_bc <<" "<< del_as <<"\n";
-	return id * eval;
+	int del_off = ((w_a_nhc*del_a_nhc) + (w_as*del_as))*id;
+	int del_def = ((del_a_hc*w_a_hc) + (w_rs*del_rs))*id;
+	if((del_off - del_def) > 0)
+		eval += 5*del_off + del_def;
+	else
+		eval += 2*del_off + 5*del_def;
+	// int del_mb = (int)blackMoves.size() - (int)whiteMoves.size() ;
+	// eval += (hb*w_non_hb) +(w_hb*hb) + (w_at_b*at_b) + (w_uat_b*uat_b) + (w_mb*del_mb)+ (w_as * del_as);
+	return eval;
 }
 
 bool State::valid(int a, int b)
