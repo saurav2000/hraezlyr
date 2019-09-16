@@ -28,22 +28,6 @@ State::State(const State *s)
 	updateCount();
 }
 
-void State::updateCount(){
-	for(int i =0; i<4; i++)
-		num[i] = 0;
-
-	for(int i =0; i<LIMIT; i++){
-		if(grid[i] == 1)
-			num[0]++; 
-		else if(grid[i] == -1)
-			num[1]++; 
-		else if(grid[i] == 2)
-			num[2]++; 
-		else if(grid[i] == -2)
-			num[3]++;
-	}
-}
-
 State::State()
 {
 	grid.reserve(N*M);
@@ -61,23 +45,28 @@ State::~State()
 		// delete possibleMovesW[i];
 }
 
+void State::updateCount()
+{
+	for(int i =0; i<4; i++)
+		num[i] =0;
+
+	for(int i =0; i<LIMIT; i++){
+		if(grid[i] == 1)//black soldier
+			num[0]++;
+		else if(grid[i] == -1)//white soldier
+			num[1]++;
+		else if(grid[i] == 2)//black townhall
+			num[2]++;
+		else if(grid[i] == -2)//white townhall
+			num[3]++;
+	}
+}
+
 State* State::doMove(int x_i, int y_i, int x_f, int y_f, char m, int id)
 {
 	int p_i = x_i + M*y_i;
 	int p_f = x_f + M*y_f;
 	State *res = new State(this);
-	
-	if(res->grid[p_f]!=0){
-		if(res->grid[p_f] == 1)
-			num[0]--;
-		else if(res->grid[p_f] == -1)
-			num[1]--;
-		else if(res->grid[p_f] == 2)
-			num[2]--;
-		else if(res->grid[p_f] == -2)
-			num[3]--;
-	}
-
 	if(m=='M')
 	{
 		res->grid[p_f] = res->grid[p_i];
@@ -100,6 +89,15 @@ State* State::doMove(int x_i, int y_i, int x_f, int y_f, char m, int id)
 	}
 	else
 	{
+		if(res->grid[p_f] == 1)
+			num[0]--;
+		else if(res->grid[p_f] == -1)
+			num[1]--;
+		else if(res->grid[p_f] == 2)
+			num[2]--;
+		else if(res->grid[p_f] == -2)
+			num[3]--;
+		
 		res->grid[p_f] = 0;
 		for(int i=res->cannons.size()-1;i>=0;--i)
 		{
@@ -138,8 +136,7 @@ int State::getEval(int id)
 	// 		del_t = del_t + 1;
 	// }
 	del_s = num[0] - num[1];
-	del_t = num[2] - num[3];
-
+	del_t = num[2]-num[3];
 	eval = (w_t*del_t) + (w_s * del_s);
 
 	for(int i =0; i< cannons.size(); i++){
