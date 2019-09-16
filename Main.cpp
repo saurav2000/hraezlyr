@@ -65,7 +65,7 @@ int main()
 	std::random_device dev;
 	std::mt19937 rng(dev());
 	char m;
-	int x_i, x_f, y_i, y_f;
+	int x_i, x_f, y_i, y_f, ply = 3;
 
 	if(id == -1)
 	{
@@ -78,7 +78,7 @@ int main()
 	{
 		auto start = std::chrono::high_resolution_clock::now();
 		Tree *tree = new Tree(new Node(new State(mainState), NULL, 0), id);
-		tree->iterativeDeepening(1);
+		tree->iterativeDeepening(ply);
 		auto end  = std::chrono::high_resolution_clock::now();
 		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
 		cerr<<duration<<"\n";
@@ -97,7 +97,16 @@ int main()
 		int rand = dist6(rng);
 		cout<<tree->root->children[rand]->move->toString()<<"\n";
 		mainState = new State(tree->root->children[rand]->state);
+		
+		int b = tree->root->children.size(); 
+		if(b<=5)
+			ply = 6;
+		if(b <= 20)
+			ply = 5;
+		else if(b <= 30)
+			ply = 4;
 		delete tree;
+		
 		cin>>m ;
 		cin>>x_i>>y_i>>m>>x_f>>y_f;
 		mainState = mainState->doMove(x_i, y_i, x_f, y_f, m, -id);

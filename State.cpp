@@ -44,13 +44,12 @@ State::State()
 
 State::~State()
 {
-	// cerr<<"delete "<<this<<"\n";
 	grid.clear();
 	cannons.clear();
-	// for(int i=possibleMovesB.size()-1;i>=0;--i)
-		// delete possibleMovesB[i];
-	// for(int i=possibleMovesW.size()-1;i>=0;--i)
-		// delete possibleMovesW[i];
+	for(int i=possibleMovesB.size()-1;i>=0;--i)
+		delete possibleMovesB[i];
+	for(int i=possibleMovesW.size()-1;i>=0;--i)
+		delete possibleMovesW[i];
 }
 
 State* State::doMove(int x_i, int y_i, int x_f, int y_f, char m, int id)
@@ -112,22 +111,17 @@ State* State::doMove(Move *m, int id)
 
 int State::getEval(int id)
 {
-	// int w_t = 100, w_s = 10, w_c = 20, w_ms = 0, w_mc = 0, w_bc = 30, w_as = 0;
-	// int w_t = 100, w_s = 50, w_c = 15, w_ms = 0, w_mc = 0, w_bc = 40, w_as = 20;
-	int w_t = 2000, w_s = 200, w_non_hb = 20, w_hb = 1, w_at_b = 30;
+	// int w_t = 2000, w_s = 300, w_non_hb = 25, w_hb = 5, w_at_b = 50, w_uat_b = -10, w_as = 20, w_mb = 10;
+	int w_t = 2000, w_s = 300, w_non_hb = 20, w_hb = 10, w_at_b = 50, w_uat_b = 0, w_as = 20, w_mb = 10;
 	int eval = 0;
-	int del_t = 0, del_s = 0;// del_c = 0, del_ms = 0, del_mc = 0, del_bc = 0, del_as = 0;
+	int del_t = 0, del_s = 0, del_as = 0;// del_c = 0, del_ms = 0, del_mc = 0, del_bc = 0, del_as = 0;
 
 	del_s = num[0] - num[1];
 	del_t = num[2] - num[3];
 	eval = (w_t*del_t) + (w_s * del_s);
 
-	// for(int i =0; i< cannons.size(); i++){
-	// 	del_c += cannons[i].id;
-	// }
-
 	// eval += (w_c * del_c);
-	int hb =0, non_hb = 0, at_b = 0;
+	int hb =0, non_hb = 0, at_b = 0, uat_b = 0;
 	vector<Move*> whiteMoves = getPossibleMoves(-1);
 	for(int i = 0; i<whiteMoves.size(); i++)
 	{
@@ -137,14 +131,16 @@ int State::getEval(int id)
 		// 	del_bc--;
 		// else if(!bomb && cannon)
 		// 	del_mc--;
-		// else if(!cannon && grid[f] > 0)
-		// 	del_as--;
+		if(!whiteMoves[i]->cannon && grid[whiteMoves[i]->f] > 0)
+			del_as--;
 		// else if(!cannon && grid[f] == 0)
 		// 	del_ms--;
 		if(!whiteMoves[i]->bomb)
 			continue;
 		if(grid[whiteMoves[i]->f]!=0)
 			--at_b;
+		else
+			--uat_b;
 		if(whiteMoves[i]->isHorizontal())
 			--hb;
 		else 
@@ -162,19 +158,22 @@ int State::getEval(int id)
 		// 	del_mc++;
 		// else if(!cannon && grid[f] == 0)
 		// 	del_ms++;
-		// else if(!cannon && grid[f] < 0)
-		// 	del_as++;
+		if(!blackMoves[i]->cannon && grid[blackMoves[i]->f] < 0)
+			del_as++;
 		if(!blackMoves[i]->bomb)
 			continue;
 		if(grid[blackMoves[i]->f]!=0)
 			++at_b;
+		else
+			++uat_b;
 		if(blackMoves[i]->isHorizontal())
 			++hb;
 		else 
 			++non_hb;
 	}
-	eval += (hb*w_non_hb) +(w_hb*hb) + (w_at_b*at_b);
-	cerr << id*eval << " " <<  del_t << " " << del_s << " " << hb << " " <<  non_hb  << " " <<  at_b << "\n";
+	int del_mb = (int)blackMoves.size() - (int)whiteMoves.size() ;
+	eval += (hb*w_non_hb) +(w_hb*hb) + (w_at_b*at_b) + (w_uat_b*uat_b) + (w_mb*del_mb)+ (w_as * del_as);
+	// cerr << id*eval << " " <<  del_t << " " << del_s << " " << hb << " " <<  non_hb  << " " <<  at_b << "\n";
 	// eval += (w_ms * del_ms) +(w_mc * del_mc) + (w_bc * del_bc) +(w_as * del_as);
 	// cerr <<del_t <<" "<< del_s <<" "<< del_c <<" "<< del_ms <<" "<< del_mc <<" "<< del_bc <<" "<< del_as <<"\n";
 	return id * eval;
