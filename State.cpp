@@ -3,16 +3,27 @@ using namespace std;
 
 State::State(int ar[])
 {
-	grid.insert(grid.begin(), ar, ar + LIMIT);
+	grid.resize(N*M);
+	// grid.insert(grid.begin(), ar, ar + LIMIT);
+	for(int i=0;i<N*M;++i)
+		grid[i]=(ar[i]);
 	cannons.reserve(14);
+	// cerr<<"create state "<<" "<<this<<"\n";
 }
 
 State::State(const State *s)
 {
-	grid.reserve(N*M);
-	cannons.reserve(14);
-	grid.insert(grid.begin(), s->grid.begin(), s->grid.end());
-	cannons.insert(cannons.begin(), s->cannons.begin(), s->cannons.end());
+	int n = s->cannons.size();
+	grid.resize(N*M);
+	cannons.resize(n);
+	// cerr<<s<<"\n";
+	for(int i=0;i<N*M;++i)
+		grid[i]=(s->grid[i]);
+	// n = s->cannons.size();
+	for(int i=0;i<n;++i)
+		cannons[i]=(s->cannons[i]);
+	// cerr<<"create state "<<" "<<this<<"\n";
+	// cerr<<s<<"\n";
 }
 
 State::State()
@@ -23,8 +34,13 @@ State::State()
 
 State::~State()
 {
+	// cerr<<"delete "<<this<<"\n";
 	grid.clear();
 	cannons.clear();
+	// for(int i=possibleMovesB.size()-1;i>=0;--i)
+		// delete possibleMovesB[i];
+	// for(int i=possibleMovesW.size()-1;i>=0;--i)
+		// delete possibleMovesW[i];
 }
 
 State* State::doMove(int x_i, int y_i, int x_f, int y_f, char m, int id)
@@ -38,27 +54,13 @@ State* State::doMove(int x_i, int y_i, int x_f, int y_f, char m, int id)
 		res->grid[p_i] = 0;
 		for(int i=res->cannons.size()-1;i>=0;--i)
 		{
-			// cerr<<"ayya lol"<<i<<"\n";
-			//OPTIMIZE///////////////////////////////////////
 			bool del = false;
-			if(res->cannons[i].isPresent(p_i))
-			{	
-				//removal of res->cannons of initial pos
-				// if(!res->cannons[i].isCannonMove(p_i, p_f))
-					del = true;
-			}
-			//removal of res->cannons of final pos
-			if(res->cannons[i].isPresent(p_f))
-				del = true;
-
-			if(del)
+			if(res->cannons[i].isPresent(p_i) || res->cannons[i].isPresent(p_f))
 				res->cannons.erase(res->cannons.begin()+i);
-			/////////////////////////////////////////////////
 		}
 
 		for(int i=0;i<validCannonForms.size();i+=2)
 		{
-			// cerr<<"wtf is going on\n";
 			if(valid(x_f+validCannonFormsX[i], y_f+validCannonFormsY[i])&&valid(x_f+validCannonFormsX[i+1], y_f+validCannonFormsY[i+1])&&res->grid[p_f+validCannonForms[i]]*id==1&&res->grid[p_f+validCannonForms[i+1]]*id==1)
 			{
 				Cannon temp(p_f, p_f+validCannonForms[i], p_f+validCannonForms[i+1], id);
@@ -75,9 +77,6 @@ State* State::doMove(int x_i, int y_i, int x_f, int y_f, char m, int id)
 				res->cannons.erase(res->cannons.begin()+i);
 		}	
 	}
-	// for(int i =0; i< cannons.size(); i++)
-	// 	cerr << res->cannons[i].p1 << " "<< res->cannons[i].p2 << " "<< res->cannons[i].p3 <<" "<< res->cannons[i].id<< "\n";
-	// cerr<<"\n";
 	return res;
 }
 
@@ -93,59 +92,62 @@ State* State::doMove(Move *m, int id)
 
 int State::getEval(int id)
 {
-	int w_t = 10, w_s = 1, w_ms = 1, w_mc = 1, w_bc = 1, w_as = 1;
+	// int w_t = 100, w_s = 10, w_c = 20, w_ms = 0, w_mc = 0, w_bc = 30, w_as = 0;
+	int w_t = 100, w_s = 50, w_c = 15, w_ms = 0, w_mc = 0, w_bc = 40, w_as = 20;
 	int eval = 0;
-	int del_t = 0, det_s = 0, del_c = 0, del_ms = 0, del_mc = 0, del_bc = 0, del_as = 0;
+	int del_t = 0, del_s = 0, del_c = 0, del_ms = 0, del_mc = 0, del_bc = 0, del_as = 0;
 
 	for(int i =0; i<LIMIT; i++){
 		if(grid[i] == -1)//white soilder
 			del_s = del_s - 1;
-		if(grid[i] == 1)//black soilder
+		else if(grid[i] == 1)//black soilder
 			del_s = del_s + 1;
-		if(grid[i] == -2)//white townhall
+		else if(grid[i] == -2)//white townhall
 			del_t = del_t - 1;
-		if(grid[i] == 2)//black townhall
+		else if(grid[i] == 2)//black townhall
 			del_t = del_t + 1;
 	}
 		
 	eval = (w_t*del_t) + (w_s * del_s);
 
-	for(int i =0; i< this.cannons.size(); i++){
-		del_c += cannons.id;
+	for(int i =0; i< cannons.size(); i++){
+		del_c += cannons[i].id;
 	}
 
 	eval += (w_c * del_c);
 
-	vector<Move*> whiteMoves = this.getPossibleMoves(1);
+	vector<Move*> whiteMoves = getPossibleMoves(-1);
 	for(int i = 0; i<whiteMoves.size(); i++)
 	{
-		bool bomb = whiteMoves[i].bomb, cannon = whiteMoves[i].cannon;
-		if(bomb && cannon)
+		bool bomb = whiteMoves[i]->bomb, cannon = whiteMoves[i]->cannon;
+		int f = whiteMoves[i]->f;
+		if(bomb && cannon && grid[f] > 0)
 			del_bc--;
 		else if(!bomb && cannon)
 			del_mc--;
-		else if(!bomb && !cannon)
-			del_ms--;
-		else if(bomb && !cannon)
+		else if(!cannon && grid[f] > 0)
 			del_as--;
+		else if(!cannon && grid[f] == 0)
+			del_ms--;
 	}
 
-	vector<Move*> blackMoves = this.getPossibleMoves(-1);
+	vector<Move*> blackMoves = getPossibleMoves(1);
 	for(int i = 0; i<blackMoves.size(); i++)
 	{
-		bool bomb = blackMoves[i].bomb, cannon = blackMoves[i].cannon;
-		if(bomb && cannon)
+		bool bomb = blackMoves[i]->bomb, cannon = blackMoves[i]->cannon;
+		int f = blackMoves[i]->f;
+		if(bomb && cannon && grid[f]<0)
 			del_bc++;
 		else if(!bomb && cannon)
 			del_mc++;
-		else if(!bomb && !cannon)
+		else if(!cannon && grid[f] == 0)
 			del_ms++;
-		else if(bomb && !cannon)
+		else if(!cannon && grid[f] < 0)
 			del_as++;
 	}
 	
 	eval += (w_ms * del_ms) +(w_mc * del_mc) + (w_bc * del_bc) +(w_as * del_as);
-	
+	// cerr <<del_t <<" "<< del_s <<" "<< del_c <<" "<< del_ms <<" "<< del_mc <<" "<< del_bc <<" "<< del_as <<"\n";
 	return id * eval;
 }
 
@@ -155,6 +157,22 @@ bool State::valid(int a, int b)
 }
 
 vector<Move*> State::getPossibleMoves(int id)
+{
+	if(id==1)
+	{
+		if(possibleMovesB.empty())
+			return possibleMovesB = setPossibleMoves(1);
+		return possibleMovesB;
+	}
+	else
+	{
+		if(possibleMovesW.empty())
+			return possibleMovesW = setPossibleMoves(-1);
+		return possibleMovesW;	
+	}
+}
+
+vector<Move*> State::setPossibleMoves(int id)
 {
 	vector<Move*> res;
 	for(int i=0;i<LIMIT;++i)

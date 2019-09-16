@@ -14,5 +14,5 @@ class Move
 	Move(int x, int y, bool b, bool cannon);
 	Move(int x, int y, bool cannon);
 	Move(int x, int y);
-	std::string toString(int n);
+	std::string toString();
 };

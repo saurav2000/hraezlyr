@@ -13,11 +13,12 @@ Tree::~Tree()
 	delete root;
 }
 
-void Tree::iterativeDeepening(Node *node, int tree_depth)
+void Tree::iterativeDeepening(int tree_depth)
 {
-	for(int i=0; i<tree_depth; ++i)
+	for(int i=0; i<=tree_depth; ++i)
 	{
-		alphaBetaMinimax(node, true, i, -1000000000, 1000000000);
+		cerr<<i<<"\n";
+		alphaBetaMinimax(root, true, i, -1000000000, 1000000000);
 	}
 }
 
@@ -58,9 +59,8 @@ void Tree::alphaBetaMinimax(Node *node, bool isMax, int itHt, int alpha, int bet
 	}
 
 	for(; i<node->children.size(); ++i)
-	{
 		node->children[i]->pruned = true;
-	}
+	
 
 	if(isMax)
 		node->sortChildrenDescending();

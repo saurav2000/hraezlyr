@@ -9,6 +9,6 @@ class Tree
 	int id;
 	Tree(Node *n, int i);
 	~Tree();
-	void iterativeDeepening(Node *node, int tree_depth);
+	void iterativeDeepening(int tree_depth);
 	void alphaBetaMinimax(Node *node, bool isMax, int itHt, int alpha, int beta);
 };

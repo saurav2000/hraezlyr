@@ -15,10 +15,9 @@ Node::Node(State *s, Move *str, int d)
 
 Node::~Node()
 {
-	for(int i = children.size();i>=0;--i)
+	for(int i = children.size()-1;i>=0;--i)
 		delete children[i];
 	delete state;
-	delete move;
 }
 
 void Node::addChild(Node *n)
@@ -28,17 +27,21 @@ void Node::addChild(Node *n)
 
 int Node::getStateEval(int id)
 {
-	return state->getEval(int id);
+	return state->getEval(id);
 }
 
 bool compA(Node *n1, Node *n2)
 {
-	return n1->eval < n2->eval;
+	if(n1->pruned == n2->pruned)
+		return n1->eval < n2->eval;
+	return n1->pruned;
 }
 
 bool compD(Node *n1, Node *n2)
 {
-	return n1->eval > n2->eval;
+	if(n1->pruned == n2->pruned)
+		return n1->eval > n2->eval;
+	return n1->pruned;
 }
 
 void Node::sortChildrenAscending()
@@ -56,7 +59,7 @@ void Node::buildChildren(int ID)
 	int id = (1 - 2*(depth%2))*ID;
 	vector<Move*> v = state->getPossibleMoves(id);
 	for(int i=0;i<v.size();++i)
-		this->addChild(new Node(state->doMove(v[i], id), v[i], d+1));
+		this->addChild(new Node(state->doMove(v[i], id), v[i], depth+1));
 }
 
 bool Node::hasNoChildren()

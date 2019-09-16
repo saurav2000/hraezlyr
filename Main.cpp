@@ -15,14 +15,7 @@ State* initialise()
 	validCannonFormsX.insert(validCannonFormsX.begin() , begin(directionsX), end(directionsX));
 	validCannonFormsY.insert(validCannonFormsY.begin() , begin(directionsY), end(directionsY));
 	int grid[LIMIT] = {0};
-	// for (int i = 0; i < N; ++i)
-	// {
-	// 	for (int j = 0; j < M; ++j)
-	// 	{
-	// 		grid[8*i+j] = 0;
-	// 	}
-	// }
-				
+
 	for(int i=0; i<M; i+=2)
 	{
 		grid[i] = -2;//white townhalls
@@ -67,7 +60,6 @@ int main()
 	LIMIT = N*M;
 	id--;
 	id = 1-id*2;
-	cerr<<id<<" "<<LIMIT<<" "<<N<<" "<<M<<" "<<"\n";
 
 	State *mainState = initialise();
 	std::random_device dev;
@@ -80,25 +72,31 @@ int main()
 		cin>>m ;
 		cin>>x_i>>y_i>>m>>x_f>>y_f;
 		mainState = mainState->doMove(x_i, y_i, x_f, y_f, m, 1);
-		// cerr<<"He played and "<<mainState->cannons.size()<<"\n";
-	}
+	}	
 	
-
 	while(true)
 	{
-		Node *n = new Node(mainState, NULL, 0);
-		std::vector<Move*> possibleMoves = mainState->getPossibleMoves(id);
-		std::uniform_int_distribution<std::mt19937::result_type> dist6(0,possibleMoves.size()-1); // distribution in range [1, 6]
+		auto start = std::chrono::high_resolution_clock::now();
+		Tree *tree = new Tree(new Node(new State(mainState), NULL, 0), id);
+		tree->iterativeDeepening(3);
+		auto end  = std::chrono::high_resolution_clock::now();
+		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+		cerr<<duration<<"\n";
+		int size = 1;
+		for(int i = 1; i<tree->root->children.size(); i++){
+			if(tree->root->children[0]->eval != tree->root->children[i]->eval)
+				break;
+			size++;
+		}
+
+		std::uniform_int_distribution<std::mt19937::result_type> dist6(0,size-1); // distribution in range [1, 6]
 		int rand = dist6(rng);
-		Move *move = possibleMoves[rand];
-		cout<<move->toString(N)<<"\n";
-		mainState = mainState->doMove(move, id);
-		// cerr<<"I played and "<<mainState->cannons.size()<<"\n";
+		cout<<tree->root->children[rand]->move->toString()<<"\n";
+		mainState = new State(tree->root->children[rand]->state);
+		delete tree;
 		cin>>m ;
 		cin>>x_i>>y_i>>m>>x_f>>y_f;
 		mainState = mainState->doMove(x_i, y_i, x_f, y_f, m, -id);
-		// cerr<<"He played and "<<mainState->cannons.size()<<"\n";
-	}
 
 	return 0;
 }

@@ -25,14 +25,14 @@ Move::Move(int a, int b)
 	cannon = false;
 }
 
-string Move::toString(int n)
+string Move::toString()
 {
 	string res = "S ";
-	res+=to_string(i%n)+" "+to_string(i/n)+" ";
+	res+=to_string(i%N)+" "+to_string(i/N)+" ";
 	if(bomb)
 		res+="B ";
 	else
 		res+="M ";
-	res+=to_string(f%n)+" "+to_string(f/n);
+	res+=to_string(f%N)+" "+to_string(f/N);
 	return res;
 }
