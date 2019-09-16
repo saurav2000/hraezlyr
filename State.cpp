@@ -113,7 +113,7 @@ int State::getEval(int id)
 {
 	// int w_t = 2000, w_s = 300, w_non_hb = 25, w_hb = 5, w_at_b = 50, w_uat_b = -10, w_as = 20, w_mb = 10;
 	//int w_t = 2000, w_s = 300, w_non_hb = 20, w_hb = 10, w_at_b = 50, w_uat_b = 0, w_as = 20, w_mb = 10;
-	int w_t = 250, w_s = 80, w_as = 5, w_a_nhc = 10 , w_a_hc = 10, w_rs = 3;
+	int w_t = 200, w_s = 50, w_as = 1, w_a_nhc = 8 , w_a_hc = 6, w_rs = 2;
 	// int w_t = 200, w_s = 40, w_as = 1, w_a_nhc = 8, w_a_hc = 4, w_rs = 1;
 	int eval = 0;
 	int del_t = 0, del_s = 0, del_as = 0, del_a_nhc = 0, del_a_hc = 0, del_rs = 0;// del_c = 0, del_ms = 0, del_mc = 0, del_bc = 0, del_as = 0;
@@ -181,7 +181,7 @@ int State::getEval(int id)
 	int del_off = ((w_a_nhc*del_a_nhc) + (w_as*del_as))*id;
 	int del_def = ((del_a_hc*w_a_hc) + (w_rs*del_rs))*id;
 	if((del_off - del_def) > 0)
-		eval += 5*del_off + del_def;
+		eval += 2*del_off + del_def;
 	else
 		eval += 2*del_off + 5*del_def;
 	// int del_mb = (int)blackMoves.size() - (int)whiteMoves.size() ;
