@@ -8,8 +8,11 @@ State::State(int ar[])
 	for(int i=0;i<N*M;++i)
 		grid[i]=(ar[i]);
 	cannons.reserve(14);
+	num[0] = 12;
+	num[1] = 12;
+	num[2] = 4;
+	num[3] = 4;
 	// cerr<<"create state "<<" "<<this<<"\n";
-	updateCount();
 }
 
 State::State(const State *s)
@@ -25,13 +28,18 @@ State::State(const State *s)
 		cannons[i]=(s->cannons[i]);
 	// cerr<<"create state "<<" "<<this<<"\n";
 	// cerr<<s<<"\n";
-	updateCount();
+	for(int i=0;i<4;++i)
+		num[i] = s->num[i];
 }
 
 State::State()
 {
 	grid.reserve(N*M);
 	cannons.reserve(14); //Approx max no of cannons
+	num[0] = 12;
+	num[1] = 12;
+	num[2] = 4;
+	num[3] = 4;
 }
 
 State::~State()
@@ -45,28 +53,21 @@ State::~State()
 		// delete possibleMovesW[i];
 }
 
-void State::updateCount()
-{
-	for(int i =0; i<4; i++)
-		num[i] =0;
-
-	for(int i =0; i<LIMIT; i++){
-		if(grid[i] == 1)//black soldier
-			num[0]++;
-		else if(grid[i] == -1)//white soldier
-			num[1]++;
-		else if(grid[i] == 2)//black townhall
-			num[2]++;
-		else if(grid[i] == -2)//white townhall
-			num[3]++;
-	}
-}
-
 State* State::doMove(int x_i, int y_i, int x_f, int y_f, char m, int id)
 {
 	int p_i = x_i + M*y_i;
 	int p_f = x_f + M*y_f;
 	State *res = new State(this);
+
+	if(grid[p_f] == 1)
+		res->num[0]--;
+	else if(grid[p_f] == -1)
+		res->num[1]--;
+	else if(grid[p_f] == 2)
+		res->num[2]--;
+	else if(grid[p_f] == -2)
+		res->num[3]--;
+		
 	if(m=='M')
 	{
 		res->grid[p_f] = res->grid[p_i];
@@ -89,15 +90,6 @@ State* State::doMove(int x_i, int y_i, int x_f, int y_f, char m, int id)
 	}
 	else
 	{
-		if(res->grid[p_f] == 1)
-			num[0]--;
-		else if(res->grid[p_f] == -1)
-			num[1]--;
-		else if(res->grid[p_f] == 2)
-			num[2]--;
-		else if(res->grid[p_f] == -2)
-			num[3]--;
-		
 		res->grid[p_f] = 0;
 		for(int i=res->cannons.size()-1;i>=0;--i)
 		{
@@ -121,61 +113,69 @@ State* State::doMove(Move *m, int id)
 int State::getEval(int id)
 {
 	// int w_t = 100, w_s = 10, w_c = 20, w_ms = 0, w_mc = 0, w_bc = 30, w_as = 0;
-	int w_t = 100, w_s = 50, w_c = 15, w_ms = 0, w_mc = 0, w_bc = 40, w_as = 20;
+	// int w_t = 100, w_s = 50, w_c = 15, w_ms = 0, w_mc = 0, w_bc = 40, w_as = 20;
+	int w_t = 2000, w_s = 200, w_non_hb = 20, w_hb = 1, w_at_b = 30;
 	int eval = 0;
-	int del_t = 0, del_s = 0, del_c = 0, del_ms = 0, del_mc = 0, del_bc = 0, del_as = 0;
+	int del_t = 0, del_s = 0;// del_c = 0, del_ms = 0, del_mc = 0, del_bc = 0, del_as = 0;
 
-	// for(int i =0; i<LIMIT; i++){
-	// 	if(grid[i] == -1)//white soilder
-	// 		del_s = del_s - 1;
-	// 	else if(grid[i] == 1)//black soilder
-	// 		del_s = del_s + 1;
-	// 	else if(grid[i] == -2)//white townhall
-	// 		del_t = del_t - 1;
-	// 	else if(grid[i] == 2)//black townhall
-	// 		del_t = del_t + 1;
-	// }
 	del_s = num[0] - num[1];
-	del_t = num[2]-num[3];
+	del_t = num[2] - num[3];
 	eval = (w_t*del_t) + (w_s * del_s);
 
-	for(int i =0; i< cannons.size(); i++){
-		del_c += cannons[i].id;
-	}
+	// for(int i =0; i< cannons.size(); i++){
+	// 	del_c += cannons[i].id;
+	// }
 
-	eval += (w_c * del_c);
-
+	// eval += (w_c * del_c);
+	int hb =0, non_hb = 0, at_b = 0;
 	vector<Move*> whiteMoves = getPossibleMoves(-1);
 	for(int i = 0; i<whiteMoves.size(); i++)
 	{
-		bool bomb = whiteMoves[i]->bomb, cannon = whiteMoves[i]->cannon;
-		int f = whiteMoves[i]->f;
-		if(bomb && cannon && grid[f] > 0)
-			del_bc--;
-		else if(!bomb && cannon)
-			del_mc--;
-		else if(!cannon && grid[f] > 0)
-			del_as--;
-		else if(!cannon && grid[f] == 0)
-			del_ms--;
+		// bool bomb = whiteMoves[i]->bomb, cannon = whiteMoves[i]->cannon;
+		// int f = whiteMoves[i]->f;
+		// if(bomb && cannon && grid[f] > 0)
+		// 	del_bc--;
+		// else if(!bomb && cannon)
+		// 	del_mc--;
+		// else if(!cannon && grid[f] > 0)
+		// 	del_as--;
+		// else if(!cannon && grid[f] == 0)
+		// 	del_ms--;
+		if(!whiteMoves[i]->bomb)
+			continue;
+		if(grid[whiteMoves[i]->f]!=0)
+			--at_b;
+		if(whiteMoves[i]->isHorizontal())
+			--hb;
+		else 
+			--non_hb;
 	}
 
 	vector<Move*> blackMoves = getPossibleMoves(1);
 	for(int i = 0; i<blackMoves.size(); i++)
 	{
-		bool bomb = blackMoves[i]->bomb, cannon = blackMoves[i]->cannon;
-		int f = blackMoves[i]->f;
-		if(bomb && cannon && grid[f]<0)
-			del_bc++;
-		else if(!bomb && cannon)
-			del_mc++;
-		else if(!cannon && grid[f] == 0)
-			del_ms++;
-		else if(!cannon && grid[f] < 0)
-			del_as++;
+		// bool bomb = blackMoves[i]->bomb, cannon = blackMoves[i]->cannon;
+		// int f = blackMoves[i]->f;
+		// if(bomb && cannon && grid[f]<0)
+		// 	del_bc++;
+		// else if(!bomb && cannon)
+		// 	del_mc++;
+		// else if(!cannon && grid[f] == 0)
+		// 	del_ms++;
+		// else if(!cannon && grid[f] < 0)
+		// 	del_as++;
+		if(!blackMoves[i]->bomb)
+			continue;
+		if(grid[blackMoves[i]->f]!=0)
+			++at_b;
+		if(blackMoves[i]->isHorizontal())
+			++hb;
+		else 
+			++non_hb;
 	}
-	
-	eval += (w_ms * del_ms) +(w_mc * del_mc) + (w_bc * del_bc) +(w_as * del_as);
+	eval += (hb*w_non_hb) +(w_hb*hb) + (w_at_b*at_b);
+	cerr << id*eval << " " <<  del_t << " " << del_s << " " << hb << " " <<  non_hb  << " " <<  at_b << "\n";
+	// eval += (w_ms * del_ms) +(w_mc * del_mc) + (w_bc * del_bc) +(w_as * del_as);
 	// cerr <<del_t <<" "<< del_s <<" "<< del_c <<" "<< del_ms <<" "<< del_mc <<" "<< del_bc <<" "<< del_as <<"\n";
 	return id * eval;
 }

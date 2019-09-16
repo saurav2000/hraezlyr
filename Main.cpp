@@ -78,10 +78,14 @@ int main()
 	{
 		auto start = std::chrono::high_resolution_clock::now();
 		Tree *tree = new Tree(new Node(new State(mainState), NULL, 0), id);
-		tree->iterativeDeepening(3);
+		tree->iterativeDeepening(1);
 		auto end  = std::chrono::high_resolution_clock::now();
 		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
 		cerr<<duration<<"\n";
+		// for(int i = 0;i<tree->root->children.size();++i)
+		// {
+		// 	cerr<<tree->root->children[i]->move->toString()<<" "<<tree->root->children[i]->eval<<" "<<tree->root->children[i]->getStateEval(id)<<"\n";
+		// }
 		int size = 1;
 		for(int i = 1; i<tree->root->children.size(); i++){
 			if(tree->root->children[0]->eval != tree->root->children[i]->eval)

@@ -5,9 +5,9 @@ Node::Node(State *s, Move *str, int d)
 {
 	depth = d;
 	if(d&1)
-		eval = -1000000000;
-	else
 		eval = 1000000000;
+	else
+		eval = -1000000000;
 	pruned = false;
 	state = s;
 	move = str;

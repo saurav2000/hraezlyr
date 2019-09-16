@@ -15,4 +15,6 @@ class Move
 	Move(int x, int y, bool cannon);
 	Move(int x, int y);
 	std::string toString();
+	bool isHorizontal();
+
 };

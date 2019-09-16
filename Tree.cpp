@@ -17,7 +17,6 @@ void Tree::iterativeDeepening(int tree_depth)
 {
 	for(int i=0; i<=tree_depth; ++i)
 	{
-		cerr<<i<<"\n";
 		alphaBetaMinimax(root, true, i, -1000000000, 1000000000);
 	}
 }
@@ -26,12 +25,20 @@ void Tree::alphaBetaMinimax(Node *node, bool isMax, int itHt, int alpha, int bet
 {	
 	if(itHt==0)
 	{
+		if(node!=root)
+		cerr << node->move->toString() << " ";
 		node->eval = node->getStateEval(id);
 		return;
 	}
 
 	if(node->hasNoChildren())
 		node->buildChildren(id);
+
+	if(node->hasNoChildren())
+	{
+		node->eval = node->getStateEval(id);
+		return;
+	}
 
 	int i=0;
 	for(; i<node->children.size(); ++i)

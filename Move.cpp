@@ -36,3 +36,8 @@ string Move::toString()
 	res+=to_string(f%N)+" "+to_string(f/N);
 	return res;
 }
+
+bool Move::isHorizontal()
+{
+	return i/N == f/N;
+}
