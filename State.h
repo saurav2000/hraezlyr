@@ -4,6 +4,7 @@ class State
 {
 	public:
 
+	int num[4];//bs-ws-bt-st;
 	std::vector<int> grid;
 	std::vector<Cannon> cannons;
 	std::vector<Move*> possibleMovesB, possibleMovesW;
@@ -18,4 +19,7 @@ class State
 	std::vector<Move*> getPossibleMoves(int id);
 	std::vector<Move*> setPossibleMoves(int id);
 	static bool valid(int a, int b);
+
+	private:
+	void updateCount();
 };

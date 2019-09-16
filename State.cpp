@@ -9,6 +9,7 @@ State::State(int ar[])
 		grid[i]=(ar[i]);
 	cannons.reserve(14);
 	// cerr<<"create state "<<" "<<this<<"\n";
+	updateCount();
 }
 
 State::State(const State *s)
@@ -24,6 +25,23 @@ State::State(const State *s)
 		cannons[i]=(s->cannons[i]);
 	// cerr<<"create state "<<" "<<this<<"\n";
 	// cerr<<s<<"\n";
+	updateCount();
+}
+
+void State::updateCount(){
+	for(int i =0; i<4; i++)
+		num[i] = 0;
+
+	for(int i =0; i<LIMIT; i++){
+		if(grid[i] == 1)
+			num[0]++; 
+		else if(grid[i] == -1)
+			num[1]++; 
+		else if(grid[i] == 2)
+			num[2]++; 
+		else if(grid[i] == -2)
+			num[3]++;
+	}
 }
 
 State::State()
@@ -48,6 +66,18 @@ State* State::doMove(int x_i, int y_i, int x_f, int y_f, char m, int id)
 	int p_i = x_i + M*y_i;
 	int p_f = x_f + M*y_f;
 	State *res = new State(this);
+	
+	if(res->grid[p_f]!=0){
+		if(res->grid[p_f] == 1)
+			num[0]--;
+		else if(res->grid[p_f] == -1)
+			num[1]--;
+		else if(res->grid[p_f] == 2)
+			num[2]--;
+		else if(res->grid[p_f] == -2)
+			num[3]--;
+	}
+
 	if(m=='M')
 	{
 		res->grid[p_f] = res->grid[p_i];
@@ -97,17 +127,19 @@ int State::getEval(int id)
 	int eval = 0;
 	int del_t = 0, del_s = 0, del_c = 0, del_ms = 0, del_mc = 0, del_bc = 0, del_as = 0;
 
-	for(int i =0; i<LIMIT; i++){
-		if(grid[i] == -1)//white soilder
-			del_s = del_s - 1;
-		else if(grid[i] == 1)//black soilder
-			del_s = del_s + 1;
-		else if(grid[i] == -2)//white townhall
-			del_t = del_t - 1;
-		else if(grid[i] == 2)//black townhall
-			del_t = del_t + 1;
-	}
-		
+	// for(int i =0; i<LIMIT; i++){
+	// 	if(grid[i] == -1)//white soilder
+	// 		del_s = del_s - 1;
+	// 	else if(grid[i] == 1)//black soilder
+	// 		del_s = del_s + 1;
+	// 	else if(grid[i] == -2)//white townhall
+	// 		del_t = del_t - 1;
+	// 	else if(grid[i] == 2)//black townhall
+	// 		del_t = del_t + 1;
+	// }
+	del_s = num[0] - num[1];
+	del_t = num[2] - num[3];
+
 	eval = (w_t*del_t) + (w_s * del_s);
 
 	for(int i =0; i< cannons.size(); i++){

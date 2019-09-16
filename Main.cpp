@@ -78,7 +78,7 @@ int main()
 	{
 		auto start = std::chrono::high_resolution_clock::now();
 		Tree *tree = new Tree(new Node(new State(mainState), NULL, 0), id);
-		tree->iterativeDeepening(3);
+		tree->iterativeDeepening(4);
 		auto end  = std::chrono::high_resolution_clock::now();
 		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
 		cerr<<duration<<"\n";
@@ -93,10 +93,13 @@ int main()
 		int rand = dist6(rng);
 		cout<<tree->root->children[rand]->move->toString()<<"\n";
 		mainState = new State(tree->root->children[rand]->state);
+
+		//cout<<tree->root->eval << "\n";
+		
 		delete tree;
 		cin>>m ;
 		cin>>x_i>>y_i>>m>>x_f>>y_f;
 		mainState = mainState->doMove(x_i, y_i, x_f, y_f, m, -id);
-
+	}
 	return 0;
 }
