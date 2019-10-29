@@ -12,7 +12,6 @@ State::State(int ar[])
 	num[1] = 12;
 	num[2] = 4;
 	num[3] = 4;
-	// cerr<<"create state "<<" "<<this<<"\n";
 }
 
 State::State(const State *s)

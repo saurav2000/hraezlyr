@@ -1,19 +1,16 @@
 #include <string>
-#include <vector>
 #include <iostream>
-
-extern int N, M, LIMIT;
-extern std::vector<int> validCannonForms, validCannonFormsX, validCannonFormsY;
+#include "Global.h"
 
 class Move
 {
 	public:
 	
-	int i, f;
+	int x_i, y_i, x_f, y_f;
 	bool bomb, cannon;
-	Move(int x, int y, bool b, bool cannon);
-	Move(int x, int y, bool cannon);
-	Move(int x, int y);
+	Move(int x_i, int x_f, int y_i, int y_f, bool b, bool cannon);
+	Move(int x_i, int x_f, int y_i, int y_f, bool cannon);
+	Move(int x_i, int x_f, int y_i, int y_f);
 	std::string toString();
 	bool isHorizontal();
 

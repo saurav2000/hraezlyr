@@ -1,26 +1,32 @@
 #include "Move.h"
 using namespace std;
 
-Move::Move(int a, int b, bool z, bool y)
+Move::Move(int x_i, int x_f, int y_i, int y_f, bool b, bool y)
 {
-	i = a;
-	f = b;
-	bomb = z;
+	this->x_i = x_i;
+	this->x_f = x_f;
+	this->y_i = y_i;
+	this->y_f = y_f;
+	bomb = b;
 	cannon = y;
 }
 
-Move::Move(int a, int b, bool z)
+Move::Move(int x_i, int x_f, int y_i, int y_f, bool y)
 {
-	i = a;
-	f = b;
-	cannon = z;
+	this->x_i = x_i;
+	this->x_f = x_f;
+	this->y_i = y_i;
+	this->y_f = y_f;
 	bomb = false;
+	cannon = y;
 }
 
-Move::Move(int a, int b)
+Move::Move(int x_i, int x_f, int y_i, int y_f)
 {
-	i = a;
-	f = b;
+	this->x_i = x_i;
+	this->x_f = x_f;
+	this->y_i = y_i;
+	this->y_f = y_f;
 	bomb = false;
 	cannon = false;
 }
@@ -28,16 +34,16 @@ Move::Move(int a, int b)
 string Move::toString()
 {
 	string res = "S ";
-	res+=to_string(i%N)+" "+to_string(i/N)+" ";
+	res+=to_string(x_i)+" "+to_string(y_i)+" ";
 	if(bomb)
 		res+="B ";
 	else
 		res+="M ";
-	res+=to_string(f%N)+" "+to_string(f/N);
+	res+=to_string(x_f)+" "+to_string(y_f);
 	return res;
 }
 
 bool Move::isHorizontal()
 {
-	return i/N == f/N;
+	return x_i == x_f;
 }

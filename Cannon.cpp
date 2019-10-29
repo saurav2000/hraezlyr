@@ -16,26 +16,6 @@ Cannon::Cannon(int a, int b, int c, int i)
 		swap(p2,p3);
 }
 
-Cannon::Cannon(vector<int> v, int i)
-{
-	p1 = v[0];
-	p2 = v[1];
-	p3 = v[2];
-	id = i;
-
-	if(p1>p3)
-		swap(p1,p3);
-	if(p1>p2)
-		swap(p1,p2);
-	if(p2>p3)
-		swap(p2,p3);	
-}
-
-Cannon::Cannon()
-{
-	
-}
-
 void Cannon::moveTo(int k)
 {
 	if(k>p3)
@@ -68,7 +48,7 @@ bool Cannon::valid(int a, int b)
 	return a>=0&&a<M&&b>=0&&b<N;
 }
 
-vector<Move*> Cannon::getPossibleMoves(std::vector<int> grid)
+vector<Move*> Cannon::getPossibleMoves(Grid grid)
 {
 	int p1_x = p1%M, p1_y = p1/M, p2_x = p2%M, p2_y = p2/M, p3_x = p3%M, p3_y = p3/M;
 	vector<Move*> res;
