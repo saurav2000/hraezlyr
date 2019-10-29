@@ -14,6 +14,19 @@ Grid::Grid(int[][10] g, int n[4])
 	num[3] = n[3];
 }
 
+Grid::Grid(int[] g)
+{
+	for(int i=0;i<M;++i)
+	{
+		for(int j=0;j<N;++j)
+			grid[i][j] = g[i+M*j];
+	}
+	num[0] = M==10?15:12;
+	num[1] = M==10?15:12;
+	num[2] = M==10?5:4;
+	num[3] = M==10?5:4;
+}
+
 Grid::Grid(const Grid &g)
 {
 	for(int i=0;i<M;++i)

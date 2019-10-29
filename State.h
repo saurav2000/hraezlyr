@@ -3,8 +3,7 @@
 class State
 {
 	public:
-	int num[4];//bs-ws-bt-wt
-	std::vector<int> grid;
+	Grid grid;
 	std::vector<Cannon> cannons;
 	std::vector<Move*> possibleMovesB, possibleMovesW;
 	State(int ar[]);

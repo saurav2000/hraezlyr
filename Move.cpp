@@ -1,7 +1,7 @@
 #include "Move.h"
 using namespace std;
 
-Move::Move(int x_i, int x_f, int y_i, int y_f, bool b, bool y)
+Move::Move(int x_i, int y_i, int x_f, int y_f, bool b, bool y)
 {
 	this->x_i = x_i;
 	this->x_f = x_f;
@@ -11,7 +11,7 @@ Move::Move(int x_i, int x_f, int y_i, int y_f, bool b, bool y)
 	cannon = y;
 }
 
-Move::Move(int x_i, int x_f, int y_i, int y_f, bool y)
+Move::Move(int x_i, int y_i, int x_f, int y_f, bool y)
 {
 	this->x_i = x_i;
 	this->x_f = x_f;
@@ -21,7 +21,7 @@ Move::Move(int x_i, int x_f, int y_i, int y_f, bool y)
 	cannon = y;
 }
 
-Move::Move(int x_i, int x_f, int y_i, int y_f)
+Move::Move(int x_i, int y_i, int x_f, int y_f)
 {
 	this->x_i = x_i;
 	this->x_f = x_f;

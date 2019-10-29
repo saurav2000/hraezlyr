@@ -58,7 +58,7 @@ int main()
 {
 	cin >> id >> N >> M >> time_limit;
 	LIMIT = N*M;
-	id--;
+	--id;
 	id = 1-id*2;
 
 	State *mainState = initialise();

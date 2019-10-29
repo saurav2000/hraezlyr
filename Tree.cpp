@@ -16,17 +16,14 @@ Tree::~Tree()
 void Tree::iterativeDeepening(int tree_depth)
 {
 	for(int i=0; i<=tree_depth; ++i)
-	{
 		alphaBetaMinimax(root, true, i, -1000000000, 1000000000);
-	}
+	
 }
 
 void Tree::alphaBetaMinimax(Node *node, bool isMax, int itHt, int alpha, int beta)
 {	
 	if(itHt==0)
 	{
-		// if(node!=root)
-		// cerr << node->move->toString() << " ";
 		node->eval = node->getStateEval(id);
 		return;
 	}
