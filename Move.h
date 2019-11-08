@@ -1,5 +1,6 @@
 #include <string>
 #include <iostream>
+#include <bitset>
 #include "Global.h"
 #ifndef MOVE_H
 #define MOVE_H

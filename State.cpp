@@ -41,7 +41,7 @@ void State::doMove(int x_i, int y_i, int x_f, int y_f, bool bomb, int id)
 		for(int a=cannons[!id].size()-1;a>=0;--a)
 		{
 			if(cannons[!id][a].isPresent(x_f, y_f))
-				cannons[!id].remove(a);
+				cannons[!id].erase(cannons[!id].begin() + a);
 		}
 	}
 	else
@@ -51,7 +51,7 @@ void State::doMove(int x_i, int y_i, int x_f, int y_f, bool bomb, int id)
 			for(int a=cannons[!id].size()-1;a>=0;--a)
 			{
 				if(cannons[!id][a].isPresent(x_f, y_f))
-					cannons[!id].remove(a);
+					cannons[!id].erase(cannons[!id].begin() + a);
 			}
 		}
 		soldiers[id].reset(i);
@@ -60,7 +60,7 @@ void State::doMove(int x_i, int y_i, int x_f, int y_f, bool bomb, int id)
 		for(int a=cannons[id].size()-1;a>=0;--a)
 		{
 			if(cannons[id][a].isPresent(x_i, y_i))
-				cannons[id].remove(a);
+				cannons[id].erase(cannons[id].begin() + a);
 		}
 
 		for(int dx = -1;dx<=1;++dx)
@@ -70,7 +70,7 @@ void State::doMove(int x_i, int y_i, int x_f, int y_f, bool bomb, int id)
 				if(x_f+dx<0||x_f+(dx<<1)<0||y_f+dy<0||y_f+(dy<<1)<0||x_f+dx>=N||x_f+(dx<<1)>=N||y_f+dy>=M||y_f+(dy<<1)>=M||(!(dx||dy)))
 					continue;
 				if(soldiers[id][f+dx + N*dy] && soldiers[id][f+(dx<<1) + N*(dy<<1)])
-					cannons[id].add(Cannon(x_f+dx, y_f+dy, dx, dy));
+					cannons[id].push_back(Cannon(x_f+dx, y_f+dy, dx, dy));
 			}
 		}
 
@@ -81,7 +81,7 @@ void State::doMove(int x_i, int y_i, int x_f, int y_f, bool bomb, int id)
 				if(x_f+dx<0||x_f-dx<0||y_f+dy<0||y_f-dy<0||x_f+dx>=N||x_f-dx>=N||y_f+dy>=M||y_f-dy>=M||(!(dx||dy)))
 					continue;
 				if(soldiers[id][x_f+dx + N*(y_f+dy)] && soldiers[id][x_f-dx + N*(y_f-dy)])
-					cannons[id].add(Cannon(x_f, y_f, dx, dy));
+					cannons[id].push_back(Cannon(x_f, y_f, dx, dy));
 			}
 		}
 	}
@@ -102,7 +102,7 @@ int State::getEval()
 	return res;
 }
 
-vector<Move*> getPossibleMoves(int id)
+vector<Move*> State::getPossibleMoves(int id)
 {
 	if(setMoves[id])
 		return moves[id];
@@ -110,7 +110,7 @@ vector<Move*> getPossibleMoves(int id)
 	return moves[id] = setPossibleMoves(id);
 }
 
-vector<Move*> setPossibleMoves(int id)
+vector<Move*> State::setPossibleMoves(int id)
 {
 	vector<Move*> res;
 	int cid = ((id<<1) - 1);
@@ -168,7 +168,7 @@ vector<Move*> setPossibleMoves(int id)
 	}
 
 	for(int i=cannons[id].size()-1;i>=0;--i)
-		cannons[id][i].getMoves(soldiers, townhalls, id, res);
+		cannons[id][i].getMoves(soldiers, townhalls, id, res, id!=ID);
 
 	return res;
 }

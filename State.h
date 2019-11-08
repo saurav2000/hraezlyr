@@ -1,5 +1,4 @@
-#include "Move.h"
-#include <bitset>
+#include "Cannon.h"
 #ifndef STATE_H
 #define STATE_H value
 

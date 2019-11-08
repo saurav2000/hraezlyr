@@ -54,7 +54,7 @@ void Node::buildChildren()
 	for(int i=0;i<v.size();++i)
 	{
 		Node *n = new Node(new State(state), v[i], depth+1);
-		n->doMove(v[i], id);
+		n->state->doMove(v[i], id);
 		this->addChild(n);
 	}
 }

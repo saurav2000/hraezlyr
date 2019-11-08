@@ -22,7 +22,7 @@ bool Cannon::isPresent(int a, int b)
 	return (x==a&&y==b) || (x+dx==a&&y+dy==b) || (x-dx==a&&y-dy==b);
 }
 
-void getMoves(bitset<100> *soldiers, bitset<100> *townhalls, int id, vector<Move*> &res, bool empty)
+void Cannon::getMoves(bitset<100> *soldiers, bitset<100> *townhalls, int id, vector<Move*> &res, bool empty)
 {
 	int p = x + M*y;
 	int dx2 = dx<<1, dx3 = dx2+dx, dx4 = dx2<<1;
