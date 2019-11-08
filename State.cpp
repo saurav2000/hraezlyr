@@ -16,14 +16,15 @@ State::State(const State *s)
 
 State::State()
 {
-
+	setMoves[0] = false;
+	setMoves[1] = false;
 }
 
 State::~State()
 {
-	for(int i=moves[0].size();i>=0;--i)
+	for(int i=moves[0].size()-1;i>=0;--i)
 		delete moves[0][i];
-	for(int i=moves[1].size();i>=0;--i)
+	for(int i=moves[1].size()-1;i>=0;--i)
 		delete moves[1][i];
 }
 
@@ -114,12 +115,12 @@ vector<Move*> State::setPossibleMoves(int id)
 {
 	vector<Move*> res;
 	int cid = ((id<<1) - 1);
-	int Mid = N*cid;
-	
-	for(int x=0;x<N;++x)
+	int Nid = N*cid;
+	for(int y=0;y<M;++y)
 	{
-		for(int y=0;y<M;++y)
+		for(int x=0;x<N;++x)
 		{
+
 			int p = x + N*y;
 			if(!soldiers[id][p])
 				continue;
@@ -129,10 +130,10 @@ vector<Move*> State::setPossibleMoves(int id)
 			{
 				for(int a=-1;a<=1;++a)
 				{
-					if(x+a>=0 && x+a<N && !soldiers[id][p+Mid+a])
+					if(x+a>=0 && x+a<N && !soldiers[id][p+Nid+a])
 					{
 						res.push_back(new Move(x,y,x+a,y+cid));
-						if(soldiers[!id][p+Mid+a])
+						if(soldiers[!id][p+Nid+a])
 							surr = true;
 					}
 				}
@@ -153,17 +154,20 @@ vector<Move*> State::setPossibleMoves(int id)
 			}
 
 			cid = cid<<1;
-			Mid = Mid<<1;
+			Nid = Nid<<1;
 
 			//retreating moves
 			if(surr && y-cid>=0 && y-cid<M)
 			{
 				for(int a=-2;a<=2;a+=2)
 				{
-					if(x+a>=0 && x+a<N && !soldiers[id][p+a-Mid] && !townhalls[id][p+a-Mid])
+					if(x+a>=0 && x+a<N && !soldiers[id][p+a-Nid] && !townhalls[id][p+a-Nid])
 						res.push_back(new Move(x,y,x+a,y-cid));
 				}
 			}
+
+			cid = cid>>1;
+			Nid = Nid>>1;
 		}
 	}
 

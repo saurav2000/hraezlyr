@@ -9,6 +9,7 @@ State* initialise(string filename)
 	string bs, bt, ws, wt;
 	ifstream fin(filename);
 	fin>>bs;
+
 	fin>>bt;
 	fin>>ws;
 	fin>>wt;
@@ -37,7 +38,7 @@ int main()
 	// std::random_device dev;
 	// std::mt19937 rng(dev());
 	char m;
-	int x_i, x_f, y_i, y_f, ply = 4;
+	int x_i, x_f, y_i, y_f, ply = 5;
 
 	if(ID)
 	{
@@ -50,10 +51,10 @@ int main()
 	{
 		auto start = std::chrono::high_resolution_clock::now();
 		Tree *tree = new Tree(new Node(new State(mainState), NULL, 0));
-		tree->iterativeDeepening(ply, 2.0);
+		tree->iterativeDeepening(ply, 2.5);
 		auto end  = std::chrono::high_resolution_clock::now();
 		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-		// cerr<<duration<<"\n";
+		cerr<<duration<<"\n";
 		// for(int i = 0;i<tree->root->children.size();++i)
 		// {
 		// 	cerr<<tree->root->children[i]->move->toString()<<" "<<tree->root->children[i]->eval<<" "<<tree->root->children[i]->getStateEval(id)<<"\n";
@@ -67,7 +68,7 @@ int main()
 
 		// std::uniform_int_distribution<std::mt19937::result_type> dist6(0,size-1); // distribution in range [1, 6]
 		// int rand = dist6(rng);
-		cout<<tree->root->children[0]->move->toString()<<"\n";
+		// cout<<tree->root->children[0]->move->toString()<<"\n";
 		mainState = new State(tree->root->children[0]->state);
 		for(int i=0;i<tree->root->children.size();++i)
 			cerr<<tree->root->children[i]->move->toString()<<"\n";
@@ -80,7 +81,6 @@ int main()
 		else if(b < 22)
 			ply = 5;
 		delete tree;
-		
 		cin>>m ;
 		cin>>x_i>>y_i>>m>>x_f>>y_f;
 		mainState->doMove(x_i, y_i, x_f, y_f, m=='B', !ID);
