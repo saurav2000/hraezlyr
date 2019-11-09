@@ -31,7 +31,7 @@ State::~State()
 // id is who is doing the move (Changes within the tree)
 void State::doMove(int x_i, int y_i, int x_f, int y_f, bool bomb, int id)
 {
-	int i = x_i + N*y_f, f = x_f+N*y_f;
+	int i = x_i + N*y_i, f = x_f+N*y_f;
 	if(id&&y_f==M-1)
 		townhalls[0].reset(f);
 	if(!id&&y_f==0)
@@ -90,12 +90,33 @@ void State::doMove(Move *m, int id)
 }
 
 // ID is who we are in total
-int State::getEval()
+int State::getEval(bool terminal)
 {
 	int res = 0;
-	int soldier_wt = 10, townhall_wt = 2000;
+	int soldier_wt = 1, townhall_wt = 1000;
+	int townhallCount = townhalls[ID].count(), oppTownhallCount = townhalls[!ID].count(), soldierCount = soldiers[ID].count(), oppSoldierCount = soldiers[!ID].count();
 	res+= soldier_wt * (soldiers[ID].count() - soldiers[!ID].count());
-	res+= townhall_wt * (townhalls[ID].count() - townhalls[!ID].count());
+	
+	if(townhallCount==2 || oppTownhallCount == 2|| ! soldierCount || ! oppSoldierCount)
+		terminal = true;
+
+	int del_townhalls = (townhalls[ID].count() - townhalls[!ID].count());
+	
+	if(!terminal)
+	{
+		res+= 2000 *del_townhalls + 4000 ;
+		
+		if(del_townhalls>0)
+			res+= 2000;
+	}
+	
+	if(terminal)
+	{
+		
+	}
+	
+
+
 	return res;
 }
 
