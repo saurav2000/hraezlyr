@@ -25,8 +25,8 @@ bool Cannon::isPresent(int a, int b)
 void Cannon::getMoves(bitset<100> *soldiers, bitset<100> *townhalls, int id, vector<Move*> &res, bool empty)
 {
 	int p = x + N*y;
-	int dx2 = dx<<1, dx3 = dx2+dx, dx4 = dx2<<1;
-	int dy2 = dy<<1, dy3 = dy3+dy, dy4 = dy2<<1;
+	int dx2 = dx<<1, dx3 = dx2+dx, dx4 = dx<<2;
+	int dy2 = dy<<1, dy3 = dy2+dy, dy4 = dy<<2;
 	int Ndy = N*dy, Ndy2 = N*dy2, Ndy3 = N*dy3, Ndy4 = N*dy4;
 
 	if(x+dx2>=0 && x+dx2<N && y+dy2>=0 && y+dy2<M && !soldiers[0][p+dx2+Ndy2] && !soldiers[1][p+dx2+Ndy2] && !townhalls[0][p+dx2+Ndy2] && !townhalls[1][p+dx2+Ndy2])

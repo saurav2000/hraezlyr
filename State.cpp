@@ -64,13 +64,11 @@ void State::doMove(int x_i, int y_i, int x_f, int y_f, bool bomb, int id)
 				cannons[id].erase(cannons[id].begin() + a);
 		}
 
-		for(int dx = -1;dx<=1;++dx)
+		for(int dx = -1, dx2 = -2;dx<=1;++dx, dx2+=2)
 		{
-			for(int dy = -1; dy<=1; ++dy)
+			for(int dy = -1, dy2 = -2; dy<=1; ++dy, dy2+=2)
 			{
-				if(x_f+dx<0||x_f+(dx<<1)<0||y_f+dy<0||y_f+(dy<<1)<0||x_f+dx>=N||x_f+(dx<<1)>=N||y_f+dy>=M||y_f+(dy<<1)>=M||(!(dx||dy)))
-					continue;
-				if(soldiers[id][f+dx + N*dy] && soldiers[id][f+(dx<<1) + N*(dy<<1)])
+				if((dx||dy) && x_f+dx>=0 && x_f+dx2>=0 && y_f+dy>=0 && y_f+dy2>=0 && x_f+dx<N && x_f+dx2<N && y_f+dy<M && y_f+dy2<M && soldiers[id][f+dx + N*dy] && soldiers[id][f+dx2 + N*dy2])
 					cannons[id].push_back(Cannon(x_f+dx, y_f+dy, dx, dy));
 			}
 		}
@@ -79,9 +77,7 @@ void State::doMove(int x_i, int y_i, int x_f, int y_f, bool bomb, int id)
 		{
 			for(int dy = -1;dy<=1;++dy)
 			{
-				if(x_f+dx<0||x_f-dx<0||y_f+dy<0||y_f-dy<0||x_f+dx>=N||x_f-dx>=N||y_f+dy>=M||y_f-dy>=M||(!(dx||dy)))
-					continue;
-				if(soldiers[id][x_f+dx + N*(y_f+dy)] && soldiers[id][x_f-dx + N*(y_f-dy)])
+				if((dx||dy) && x_f+dx>=0 && x_f-dx>=0 && y_f+dy>=0 && y_f-dy>=0 && x_f+dx<N && x_f-dx<N && y_f+dy<M && y_f-dy<M && soldiers[id][x_f+dx + N*(y_f+dy)] && soldiers[id][x_f-dx + N*(y_f-dy)])
 					cannons[id].push_back(Cannon(x_f, y_f, dx, dy));
 			}
 		}
@@ -116,12 +112,10 @@ vector<Move*> State::setPossibleMoves(int id)
 	vector<Move*> res;
 	int cid = ((id<<1) - 1);
 	int Nid = N*cid;
-	for(int y=0;y<M;++y)
+	for(int y=0,p=0;y<M;++y)
 	{
-		for(int x=0;x<N;++x)
+		for(int x=0;x<N;++x,++p)
 		{
-
-			int p = x + N*y;
 			if(!soldiers[id][p])
 				continue;
 			bool surr = false;
