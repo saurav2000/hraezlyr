@@ -149,14 +149,14 @@ int State::getEval()//(bool terminal)
 			
 			if(dx*dy > 0)
 			{
-				if(x < cx && id || x > (N-cx-1) && !id)
+				if((x < cx && id) || (x > (N-cx-1) && !id))
 					score[id] += cannonImp*1.5;
 				else 
 					score[id] += cannonBad;
 			}
 			else if(dx*dy < 0)
 			{
-				if(x > (N-cx-1) && id || x < cx && !id)
+				if((x > (N-cx-1) && id) || (x < cx && !id))
 					score[id] += cannonImp*1.5;
 				else 
 					score[id] += cannonBad;
@@ -164,9 +164,9 @@ int State::getEval()//(bool terminal)
 			else if(dx == 0)
 			{
 				if(id)
-					score[id] += cannonImp*(1+ 0.05*(y - M/2));
+					score[id] += cannonImp*(1+ 0.05*(y));
 				else
-					score[id] += cannonImp*(1+ 0.05*(M/2 - y));
+					score[id] += cannonImp*(1+ 0.05*(M-1-y));
 			}
 			else//dy == 0
 			{
