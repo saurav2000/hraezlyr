@@ -90,11 +90,12 @@ void State::doMove(Move *m, int id)
 }
 
 // ID is who we are in total
-int State::getEval(bool terminal)
+int State::getEval()//(bool terminal)
 {
 	int res = 0;
-	int soldier_wt = 1, townhall_wt = 1000;
+	int soldier_wt = 1, townhall_wt = 1000, cannonBad = 0, cannonImp = 500, cannonNormal = 200;
 	int townhallCount = townhalls[ID].count(), oppTownhallCount = townhalls[!ID].count(), soldierCount = soldiers[ID].count(), oppSoldierCount = soldiers[!ID].count();
+	
 	res+= soldier_wt * (soldiers[ID].count() - soldiers[!ID].count());
 	
 	if(townhallCount==2 || oppTownhallCount == 2|| ! soldierCount || ! oppSoldierCount)
@@ -112,10 +113,50 @@ int State::getEval(bool terminal)
 	
 	if(terminal)
 	{
-		
+
 	}
 	
+	int cx, cy;
 
+	int score[2];	
+
+	for(int id =0; id <2; id++)
+	{
+		score[id] = 0;
+		for(int i =0; i < cannons[id].size(); i++)
+		{
+			int x = cannons[i].x, y = cannons[i].y, dx = cannons[i].dx, dy = cannons[i].dy;
+			
+			if(dx*dy > 0)
+			{
+				if(x < cx && id == 1 || x > (N-cx-1) && id == 0)
+					score[id] += cannonImp;
+				else 
+					score[id] += cannonBad;
+			}
+			else if(dx*dy < 0)
+			{
+				if(x > (N-cx-1) && id == 1 || x < cx && id == 0)
+					score[id] += cannonImp;
+				else 
+					score[id] += cannonBad;
+			}
+			else if(dx == 0)
+			{
+				if(id == 0)
+					score[id] += cannonImp*(M/2 - y);
+				else
+					score[id] += cannonImp*(y - M/2);
+			}
+			else//dy == 0
+			{
+				score[id] += cannonBad;
+			}
+
+		}
+	}
+
+	res += (score[0]-score[1])(id )
 
 	return res;
 }
