@@ -9,7 +9,7 @@ class State
 	std::bitset<100> townhalls[2];
 	std::vector<Cannon> cannons[2];
 	std::vector<Move*> moves[2];
-	bool setMoves[2];
+	bool setMoves[2], isTerminal;
 	State();
 	State(const State *s);
 	~State();

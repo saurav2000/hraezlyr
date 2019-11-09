@@ -53,9 +53,9 @@ void Node::buildChildren()
 	vector<Move*> v = state->getPossibleMoves(id);
 	for(int i=0;i<v.size();++i)
 	{
-		Node *n = new Node(new State(state), v[i], depth+1);
-		n->state->doMove(v[i], id);
-		this->addChild(n);
+		State *s = new State(state);
+		s->doMove(v[i], id);
+		this->addChild(new Node(s, v[i], depth+1));
 	}
 }
 

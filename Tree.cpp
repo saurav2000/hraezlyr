@@ -16,7 +16,7 @@ Tree::~Tree()
 void Tree::iterativeDeepening(int tree_depth, double time)
 {
 	auto startTime = std::chrono::high_resolution_clock::now();
-	for(int i=0; i<=tree_depth; ++i)
+	for(int i=1; i<=tree_depth; ++i)
 	{
 		auto finishTime = std::chrono::high_resolution_clock::now();
 		double timeCount = std::chrono::duration_cast<std::chrono::duration<double> >(finishTime - startTime).count();
