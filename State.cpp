@@ -177,7 +177,6 @@ int State::getEval()//(bool terminal)
 	}
 
 	res += (score[ID]-score[!ID]);
-
 	return res;
 }
 

@@ -27,8 +27,8 @@ State* initialise()
 	
 	State *s = new State();
 	s->soldiers[0] = bitset<100>(initBoardState[index][0]);
-	s->soldiers[1] = bitset<100>(initBoardState[index][1]);
-	s->townhalls[0] = bitset<100>(initBoardState[index][2]);
+	s->townhalls[0] = bitset<100>(initBoardState[index][1]);
+	s->soldiers[1] = bitset<100>(initBoardState[index][2]);
 	s->townhalls[1] = bitset<100>(initBoardState[index][3]);
 	for(int x = 0;x<N;x+=2)
 	{
@@ -45,7 +45,7 @@ int main()
 
 	State *mainState = initialise();
 	char m;
-	int x_i, x_f, y_i, y_f, ply = 5;
+	int x_i, x_f, y_i, y_f, ply = 4;
 
 	if(ID)
 	{
@@ -65,7 +65,7 @@ int main()
 		cerr<<duration<<"\n";
 		mainState = new State(tree->root->children[0]->state);
 		for(int i=0;i<tree->root->children.size();++i)
-			cerr<<tree->root->children[i]->move->toString()<<"\n";
+			cerr<<tree->root->children[i]->move->toString()<<" "<<tree->root->children[i]->eval<<" "<<tree->root->children[i]->stateEval<<"\n";
 		cerr<<"\n";
 		int b = (tree->root->children.size() + tree->root->children[0]->children.size())/2; 
 		if(b<10)
