@@ -97,7 +97,7 @@ void State::doMove(Move *m, int id)
 double State::getEval()//(bool terminal)
 {
 	double res = 0;
-	double soldier_wt = 20, townhall_wt = 5000, cannonBad = 0.01, cannonImp = 1, cannonHoriz = 0.5, cannonExist = 0.4;
+	double soldier_wt = 20, townhall_wt = 10000, cannonGood = 0.5, cannonOk = 0.01, soldierMobAdv = 0.05, soldierMobRisky = 0.01, soldierMobSupAdv = 0.5;// cannonHoriz = 0.5, cannonExist = 0.4;
 	
 	res+= soldier_wt * ((int)soldiers[ID].count() - (int)soldiers[!ID].count());
 	res+= cannonExist * ((int)cannons[ID].size() - (int)cannons[!ID].size());
@@ -146,48 +146,67 @@ double State::getEval()//(bool terminal)
 		{
 			if(!soldiers[0][p] && !soldiers[1][p])
 				continue;
+
 			if(soldiers[0][p])
-				score[0]+= 0.0001 * (M-1-y);
+			{
+				if(y < 3)
+					score[0]+= soldierMobSupAdv * (M-1-y);
+				else if (y < )
+
+				else
+					score[0]+= soldierMobAdv * (M-1-y);
+			}
+				
+			if(soldiers[0][p])
+				score[0]+= soldierMob * (M-1-y);
 			else	
-				score[1]+= 0.0001 * (y);
+				score[1]+= soldierMob * (y);
 		}
 	}
 	
 	
-	// for(int id=0; id<2; ++id)
-	// {
-	// 	for(int i=cannons[id].size()-1; i>=0; --i)
-	// 	{
-	// 		int x = cannons[id][i].x, y = cannons[id][i].y, dx = cannons[id][i].dx, dy = cannons[id][i].dy;
+	for(int id=0; id<2; ++id)
+	{
+		for(int i=cannons[id].size()-1; i>=0; --i)
+		{
+			int x = cannons[id][i].x, y = cannons[id][i].y, dx = cannons[id][i].dx, dy = cannons[id][i].dy;
 			
-	// 		if(dx*dy > 0)
-	// 		{
-	// 			if((x < cx && id) || (x > (N-cx-1) && !id))
-	// 				score[id] += cannonImp*1.5;
-	// 			else 
-	// 				score[id] += cannonBad;
-	// 		}
-	// 		else if(dx*dy < 0)
-	// 		{
-	// 			if((x > (N-cx-1) && id) || (x < cx && !id))
-	// 				score[id] += cannonImp*1.5;
-	// 			else 
-	// 				score[id] += cannonBad;
-	// 		}
-	// 		else if(dx == 0)
-	// 		{
-	// 			if(id)
-	// 				score[id] += cannonImp*(1+ 0.05*(y));
-	// 			else
-	// 				score[id] += cannonImp*(1+ 0.05*(M-1-y));
-	// 		}
-	// 		else//dy == 0
-	// 		{
-	// 			score[id] += cannonHoriz;
-	// 		}
+			if(dx*dy > 0)
+			{
+				int s = id*2 -1; //1->white; -1->black 
+				bool hasForwardMove =  (x+s*2 >= 0) && (x+s*2 < N) && (y+s*2) >= 0 && (y+s*2) < M && !soldiers[0][x+s*2 + (y+s*2)*N] && !soldiers[1][x+s*2 + (y+s*2)*N];
+				
+				if(hasForwardMove)
+					score[id] += cannonGood;
+			}
+			else if(dx*dy < 0)
+			{
+				int s = id*2 -1; //1->white; -1->black 
+				bool hasForwardMove =  (x-s*2 >= 0) && (x-s*2 < N) && (y+s*2) >= 0 && (y+s*2) < M && !soldiers[0][x-s*2 + (y+s*2)*N] && !soldiers[1][x-s*2 + (y+s*2)*N];
+				
+				if(hasForwardMove)
+					score[id] += cannonGood;
+			}
+			else if(dx == 0)
+			{
+				int s = id*2 -1; //1->white; -1->black 
+				bool hasForwardMove =  (y+s*2) >= 0 && (y+s*2) < M && !soldiers[0][x + (y+s*2)*N] && !soldiers[1][x + (y+s*2)*N];
+				
+				if(!hasForwardMove)
+					continue;
+
+				if((x == N-1 && id) || (x == 0 && !id))
+					score[id] += cannonGood;
+				else
+					score[id] += cannonOk;
+			}
+			else//dy == 0
+			{
+				score[id] += cannonOk;
+			}
 			
-	// 	}
-	// }
+		}
+	}
 
 	res += (score[ID]-score[!ID]);
 	return res;
