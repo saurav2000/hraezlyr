@@ -11,7 +11,7 @@ class Tree
 	Tree(Node *n);
 	~Tree();
 	void iterativeDeepening(int tree_depth, double time);
-	int alphaBetaMinimax(Node *node, bool isMax, int itHt, int alpha, int beta, double rem_time);
+	int alphaBetaMinimax(Node *node, bool isMax, int itHt, double alpha, double beta, double rem_time);
 };
 
 #endif

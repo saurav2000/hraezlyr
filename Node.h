@@ -9,7 +9,8 @@ class Node
 
 	Move *move;
 	State *state;
-	int depth, eval, stateEval;
+	int depth;
+	double eval, stateEval;
 	bool pruned;
 	std::vector<Node*> children;
 	Node(State *s, Move *str, int d);

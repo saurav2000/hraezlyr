@@ -15,7 +15,7 @@ class State
 	~State();
 	void doMove(int x_i, int y_i, int x_f, int y_f, bool bomb, int id);
 	void doMove(Move *m, int id);
-	int getEval();
+	double getEval();
 	std::vector<Move*> getPossibleMoves(int id);
 	std::vector<Move*> setPossibleMoves(int id);
 

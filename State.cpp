@@ -94,10 +94,10 @@ void State::doMove(Move *m, int id)
 }
 
 // ID is who we are in total
-int State::getEval()//(bool terminal)
+double State::getEval()//(bool terminal)
 {
-	int res = 0;
-	int soldier_wt = 10, townhall_wt = 5000, cannonBad = 2, cannonImp = 100, cannonHoriz = 20, cannonExist = 5;
+	double res = 0;
+	double soldier_wt = 20, townhall_wt = 5000, cannonBad = 0.01, cannonImp = 1, cannonHoriz = 0.5, cannonExist = 0.4;
 	
 	res+= soldier_wt * ((int)soldiers[ID].count() - (int)soldiers[!ID].count());
 	res+= cannonExist * ((int)cannons[ID].size() - (int)cannons[!ID].size());
@@ -137,44 +137,57 @@ int State::getEval()//(bool terminal)
 		else if(del_townhalls==-1)
 			tScore = -6;
 	}
+
 	res+= tScore*townhall_wt;
-	
-	int cx = 4, cy = 4, score[2] = {0};
-
-	for(int id=0; id<2; ++id)
+	double cx = 4, cy = 4, score[2] = {0};
+	for(int y=0,p=0;y<M;++y)
 	{
-		for(int i=cannons[id].size()-1; i>=0; --i)
+		for(int x=0;x<N;++x,++p)
 		{
-			int x = cannons[id][i].x, y = cannons[id][i].y, dx = cannons[id][i].dx, dy = cannons[id][i].dy;
-			
-			if(dx*dy > 0)
-			{
-				if((x < cx && id) || (x > (N-cx-1) && !id))
-					score[id] += cannonImp*1.5;
-				else 
-					score[id] += cannonBad;
-			}
-			else if(dx*dy < 0)
-			{
-				if((x > (N-cx-1) && id) || (x < cx && !id))
-					score[id] += cannonImp*1.5;
-				else 
-					score[id] += cannonBad;
-			}
-			else if(dx == 0)
-			{
-				if(id)
-					score[id] += cannonImp*(1+ 0.05*(y));
-				else
-					score[id] += cannonImp*(1+ 0.05*(M-1-y));
-			}
-			else//dy == 0
-			{
-				score[id] += cannonHoriz;
-			}
-
+			if(!soldiers[0][p] && !soldiers[1][p])
+				continue;
+			if(soldiers[0][p])
+				score[0]+= 0.0001 * (M-1-y);
+			else	
+				score[1]+= 0.0001 * (y);
 		}
 	}
+	
+	
+	// for(int id=0; id<2; ++id)
+	// {
+	// 	for(int i=cannons[id].size()-1; i>=0; --i)
+	// 	{
+	// 		int x = cannons[id][i].x, y = cannons[id][i].y, dx = cannons[id][i].dx, dy = cannons[id][i].dy;
+			
+	// 		if(dx*dy > 0)
+	// 		{
+	// 			if((x < cx && id) || (x > (N-cx-1) && !id))
+	// 				score[id] += cannonImp*1.5;
+	// 			else 
+	// 				score[id] += cannonBad;
+	// 		}
+	// 		else if(dx*dy < 0)
+	// 		{
+	// 			if((x > (N-cx-1) && id) || (x < cx && !id))
+	// 				score[id] += cannonImp*1.5;
+	// 			else 
+	// 				score[id] += cannonBad;
+	// 		}
+	// 		else if(dx == 0)
+	// 		{
+	// 			if(id)
+	// 				score[id] += cannonImp*(1+ 0.05*(y));
+	// 			else
+	// 				score[id] += cannonImp*(1+ 0.05*(M-1-y));
+	// 		}
+	// 		else//dy == 0
+	// 		{
+	// 			score[id] += cannonHoriz;
+	// 		}
+			
+	// 	}
+	// }
 
 	res += (score[ID]-score[!ID]);
 	return res;
