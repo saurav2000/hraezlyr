@@ -40,14 +40,15 @@ State* initialise()
 
 int main()
 {
-	State s1;
+	bool stagnant = false;
+	double time_cap = 2;
 	cin >> ID >> M >> N >> time_limit;
 	--ID;
 
 	State *mainState = initialise();
+	
 	char m;
 	int x_i, x_f, y_i, y_f, ply = 5;
-	bool stagnant = false;
 
 	if(ID)
 	{
@@ -55,35 +56,48 @@ int main()
 		cin>>x_i>>y_i>>m>>x_f>>y_f;
 		mainState->doMove(x_i, y_i, x_f, y_f, m=='B', 0);
 	}	
-	
+	State s1 = *mainState, s2 = *mainState;
+
+	auto start = std::chrono::high_resolution_clock::now();
+
 	while(true)
 	{
-		auto start = std::chrono::high_resolution_clock::now();
+		auto end  = std::chrono::high_resolution_clock::now();
+		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
+		
 		Tree *tree = new Tree(new Node(new State(mainState), NULL, 0));
-		tree->iterativeDeepening(ply, 2.5);
+		tree->iterativeDeepening(ply, time_cap, bichkoo);
 		if(stagnant)
 		{
 			cout<<tree->root->children[1]->move->toString()<<"\n";
+			mainState = new State(tree->root->children[1]->state);
 			stagnant = false;
 		}
 		else
+		{
 			cout<<tree->root->children[0]->move->toString()<<"\n";
-			
+			mainState = new State(tree->root->children[0]->state);
+		}
+	
+
+		if(duration > time_limit/3 &&!bichkoo)
+		{
+			time_cap = 5;
+			bichkoo = true;
+		}
+
+		cerr<<duration<<"\n";
 		
 
-		auto end  = std::chrono::high_resolution_clock::now();
-		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
-		cerr<<duration<<"\n";
-		mainState = new State(tree->root->children[0]->state);
 
-
-		if(s1 == *mainState)
+		if(s1 == *mainState || s2 == *mainState)
 			stagnant = true;
-		s1 = *mainState;
+		s1 = s2;
+		s2 = *mainState;
 
-		for(int i=0;i<tree->root->children.size();++i)
-			cerr<<tree->root->children[i]->move->toString()<<" "<<tree->root->children[i]->eval<<" "<<tree->root->children[i]->stateEval<<"\n";
-		cerr<<stagnant<<"\n";
+		// for(int i=0;i<tree->root->children.size();++i)
+		// 	cerr<<tree->root->children[i]->move->toString()<<" "<<tree->root->children[i]->eval<<" "<<tree->root->children[i]->stateEval<<"\n";
+		// cerr<<stagnant<<"\n";
 		int b = (tree->root->children.size() + tree->root->children[0]->children.size())/2; 
 		if(b<10)
 			ply = 12;

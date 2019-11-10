@@ -13,7 +13,7 @@ Tree::~Tree()
 	delete root;
 }
 
-void Tree::iterativeDeepening(int tree_depth, double time)
+void Tree::iterativeDeepening(int tree_depth, double time, bool capper)
 {
 	// alphaBetaMinimax(root, true, tree_depth, -1000000000, 1000000000, time);
 	auto startTime = std::chrono::high_resolution_clock::now();
@@ -21,6 +21,8 @@ void Tree::iterativeDeepening(int tree_depth, double time)
 	{
 		auto finishTime = std::chrono::high_resolution_clock::now();
 		double timeCount = std::chrono::duration_cast<std::chrono::duration<double> >(finishTime - startTime).count();
+		if(timeCount>time/2 && capper)
+			return;
 		if(alphaBetaMinimax(root, true, i, -1000000000, 1000000000, time-timeCount))
 		{
 			cerr<<"Time over at depth "<<i<<"\n";
