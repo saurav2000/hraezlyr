@@ -25,14 +25,14 @@ void Tree::iterativeDeepening(int tree_depth, double time, bool capper)
 			return;
 		if(alphaBetaMinimax(root, true, i, -1000000000, 1000000000, time-timeCount))
 		{
-			cerr<<"Time over at depth "<<i<<"\n";
+			// cerr<<"Time over at depth "<<i<<"\n";
 			return;
 		}
 	}
 	auto finishTime = std::chrono::high_resolution_clock::now();
 	double timeCount = std::chrono::duration_cast<std::chrono::duration<double> >(finishTime - startTime).count();
 		
-	cerr<<"Finished at depth " <<tree_depth<< " with "<<time-timeCount<< "left\n";
+	// cerr<<"Finished at depth " <<tree_depth<< " with "<<time-timeCount<< "left\n";
 }
 
 int Tree::alphaBetaMinimax(Node *node, bool isMax, int itHt, double alpha, double beta, double rem_time)

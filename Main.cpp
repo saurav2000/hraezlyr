@@ -48,7 +48,7 @@ int main()
 	State *mainState = initialise();
 	
 	char m;
-	int x_i, x_f, y_i, y_f, ply = 5;
+	int x_i, x_f, y_i, y_f, ply = 6;
 
 	if(ID)
 	{
@@ -82,11 +82,11 @@ int main()
 
 		if(duration > time_limit/3 &&!bichkoo)
 		{
-			time_cap = 5;
+			time_cap = 4;
 			bichkoo = true;
 		}
 
-		cerr<<duration<<"\n";
+		// cerr<<duration<<"\n";
 		
 
 
