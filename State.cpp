@@ -115,11 +115,15 @@ bool State::operator== (const State& other)
 // ID is who we are in total
 double State::getEval()//(bool terminal)
 {
-	double res = 0;
-	double soldier_wt = 50, townhall_wt = 10000, cannonGood = 1, cannonOk = 0.25, cannonOk2 = 0.40, soldierMobAdv = 0.005, soldierMobSupAdv = 0.01;// cannonHoriz = 0.5, cannonExist = 0.4;
-	
-	res+= soldier_wt * ((int)soldiers[ID].count() - (int)soldiers[!ID].count());
-	// res+= cannonExist * ((int)cannons[ID].size() - (int)cannons[!ID].size());
+	double res = 0;	
+	// double soldier_wt = 50, townhall_wt = 10000, cannonGood = 1, cannonOk = 0.25, cannonOk2 = 0.40, soldierMobAdv = 0.005, soldierMobSupAdv = 0.01;// cannonHoriz = 0.5, cannonExist = 0.4;
+	// double soldier_wt = 100, townhall_wt = 10000, cannonGood = 1, cannonOk = 0.25, cannonOk2 = 0.40, soldierMobAdv = 1, soldierMobSupAdv = 2;// cannonHoriz = 0.5, cannonExist = 0.4;
+	double soldier_wt = 50, soldier_self_wt = 0.08, townhall_wt = 10000, cannonGood = 1, cannonOk = 0.25, cannonOk2 = 0.40, soldierMobAdv = 1, soldierMobSupAdv = 2;// cannonHoriz = 0.5, cannonExist = 0.4;
+	if(N == 8 && M == 8)
+		soldier_wt = 50, soldier_self_wt = 0, townhall_wt = 10000, cannonGood = 1, cannonOk = 0.25, cannonOk2 = 0.40, soldierMobAdv = 0.005, soldierMobSupAdv = 0.01;// cannonHoriz = 0.5, cannonExist = 0.4;
+
+	res+= soldier_wt * (((int)soldiers[ID].count()- (int)soldiers[!ID].count()) + soldier_self_wt*((int)soldiers[ID].count()));
+	// res+= soldier_wt * ((int)soldiers[ID].count()- (int)soldiers[!ID].count());
 
 	int del_townhalls = ((int)townhalls[ID].count() - (int)townhalls[!ID].count()), tScore = 0;
 	
