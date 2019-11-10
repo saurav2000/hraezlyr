@@ -40,12 +40,14 @@ State* initialise()
 
 int main()
 {
+	State s1;
 	cin >> ID >> M >> N >> time_limit;
 	--ID;
 
 	State *mainState = initialise();
 	char m;
-	int x_i, x_f, y_i, y_f, ply = 4;
+	int x_i, x_f, y_i, y_f, ply = 5;
+	bool stagnant = false;
 
 	if(ID)
 	{
@@ -59,21 +61,36 @@ int main()
 		auto start = std::chrono::high_resolution_clock::now();
 		Tree *tree = new Tree(new Node(new State(mainState), NULL, 0));
 		tree->iterativeDeepening(ply, 2.5);
-		cout<<tree->root->children[0]->move->toString()<<"\n";
+		if(stagnant)
+		{
+			cout<<tree->root->children[1]->move->toString()<<"\n";
+			stagnant = false;
+		}
+		else
+			cout<<tree->root->children[0]->move->toString()<<"\n";
+			
+		
+
 		auto end  = std::chrono::high_resolution_clock::now();
 		auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - start).count();
 		cerr<<duration<<"\n";
 		mainState = new State(tree->root->children[0]->state);
+
+
+		if(s1 == *mainState)
+			stagnant = true;
+		s1 = *mainState;
+
 		for(int i=0;i<tree->root->children.size();++i)
 			cerr<<tree->root->children[i]->move->toString()<<" "<<tree->root->children[i]->eval<<" "<<tree->root->children[i]->stateEval<<"\n";
-		cerr<<"\n";
+		cerr<<stagnant<<"\n";
 		int b = (tree->root->children.size() + tree->root->children[0]->children.size())/2; 
 		if(b<10)
-			ply = 7;
+			ply = 12;
 		if(b <15)
-			ply = 6;
+			ply = 10;
 		else if(b < 22)
-			ply = 5;
+			ply = 9;
 		delete tree;
 
 		cin>>m ;

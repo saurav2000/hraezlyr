@@ -15,6 +15,20 @@ State::State(const State *s)
 	isTerminal = s->isTerminal;
 }
 
+State::State(const State &s)
+{
+	soldiers[0] = s.soldiers[0];
+	soldiers[1] = s.soldiers[1];
+
+	townhalls[0] = s.townhalls[0];
+	townhalls[1] = s.townhalls[1];
+	cannons[0] = s.cannons[0];
+	cannons[1] = s.cannons[1];
+	setMoves[0] = false;
+	setMoves[1] = false;
+	isTerminal = s.isTerminal;
+}
+
 State::State()
 {
 	setMoves[0] = false;
@@ -93,20 +107,24 @@ void State::doMove(Move *m, int id)
 	this->doMove(m->x_i, m->y_i, m->x_f, m->y_f, m->bomb, id);
 }
 
+bool State::operator== (const State& other)
+{
+	return soldiers[0]==other.soldiers[0] && soldiers[1]==other.soldiers[1] && townhalls[0]==other.townhalls[0] && townhalls[1]==other.townhalls[1];
+}
+
 // ID is who we are in total
 double State::getEval()//(bool terminal)
 {
 	double res = 0;
-	double soldier_wt = 20, townhall_wt = 10000, cannonGood = 0.5, cannonOk = 0.01, soldierMobAdv = 0.05, soldierMobRisky = 0.01, soldierMobSupAdv = 0.5;// cannonHoriz = 0.5, cannonExist = 0.4;
+	double soldier_wt = 50, townhall_wt = 10000, cannonGood = 1, cannonOk = 0.25, cannonOk2 = 0.40, soldierMobAdv = 0.005, soldierMobSupAdv = 0.01;// cannonHoriz = 0.5, cannonExist = 0.4;
 	
 	res+= soldier_wt * ((int)soldiers[ID].count() - (int)soldiers[!ID].count());
-	res+= cannonExist * ((int)cannons[ID].size() - (int)cannons[!ID].size());
+	// res+= cannonExist * ((int)cannons[ID].size() - (int)cannons[!ID].size());
 
 	int del_townhalls = ((int)townhalls[ID].count() - (int)townhalls[!ID].count()), tScore = 0;
 	
 	if(isTerminal)
 	{
-
 		if(del_townhalls==2)
 			tScore = 10;
 		else if(del_townhalls==-2)
@@ -132,10 +150,30 @@ double State::getEval()//(bool terminal)
 	}
 	else
 	{
-		if(del_townhalls==1)
+		if(soldiers[ID].count()==1)
+		{
+			if(del_townhalls==1)
+				tScore=2;
+			else if (del_townhalls==-1)
+				tScore=-6;
+			else
+				tScore=-2;
+		}
+		else if(soldiers[!ID].count()==1)
+		{
+			if(del_townhalls==1)
+				tScore=6;
+			else if(del_townhalls==-1)
+				tScore=-2;
+			else
+				tScore=2;
+		}
+		else if(del_townhalls==1)
 			tScore = 6;
 		else if(del_townhalls==-1)
 			tScore = -6;
+		else if(townhalls[ID].count() == N/2-1)
+			tScore = -2;
 	}
 
 	res+= tScore*townhall_wt;
@@ -149,27 +187,41 @@ double State::getEval()//(bool terminal)
 
 			if(soldiers[0][p])
 			{
-				if(y < 3)
-					score[0]+= soldierMobSupAdv * (M-1-y);
-				else if (y < )
+				if(y < M/2-1)
+					score[0]+= soldierMobSupAdv*(M - 1 - y);
+				else //if (y >= M/2)
+					score[0]+= soldierMobAdv*(M - 1 - y);
+				// else
+				// 	score[0]+= soldierMobRisky;
+			}
+			else if(soldiers[1][p])
+			{
+				if(y < M/2 + 1)
+					score[1]+= soldierMobAdv*( y);
+				else //if (y >= M/2)
+					score[1]+= soldierMobSupAdv*(y);
 
-				else
-					score[0]+= soldierMobAdv * (M-1-y);
+				// if(y >= M - 3)
+				// 	score[1]+= soldierMobSupAdv*(y - M + 4);
+				// else if (y < M/2)
+				// 	score[1]+= soldierMobAdv;
+				// else
+				// 	score[1]+= soldierMobRisky;
 			}
 				
-			if(soldiers[0][p])
-				score[0]+= soldierMob * (M-1-y);
-			else	
-				score[1]+= soldierMob * (y);
 		}
 	}
 	
-	
+	// score[0] /= soldiers[0].count() + soldiers[1].count();
+	// score[1] /= soldiers[0].count() + soldiers[1].count();
+
 	for(int id=0; id<2; ++id)
 	{
 		for(int i=cannons[id].size()-1; i>=0; --i)
 		{
 			int x = cannons[id][i].x, y = cannons[id][i].y, dx = cannons[id][i].dx, dy = cannons[id][i].dy;
+			if((id && y > M-5)||(!id && y <4))
+				continue;
 			
 			if(dx*dy > 0)
 			{
@@ -196,7 +248,7 @@ double State::getEval()//(bool terminal)
 					continue;
 
 				if((x == N-1 && id) || (x == 0 && !id))
-					score[id] += cannonGood;
+					score[id] += cannonOk2;
 				else
 					score[id] += cannonOk;
 			}

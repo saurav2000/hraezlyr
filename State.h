@@ -12,13 +12,14 @@ class State
 	bool setMoves[2], isTerminal;
 	State();
 	State(const State *s);
+	State(const State &s);
 	~State();
 	void doMove(int x_i, int y_i, int x_f, int y_f, bool bomb, int id);
 	void doMove(Move *m, int id);
 	double getEval();
 	std::vector<Move*> getPossibleMoves(int id);
 	std::vector<Move*> setPossibleMoves(int id);
-
+	bool operator== (const State& other);
 };
 
 #endif
