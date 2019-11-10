@@ -40,7 +40,7 @@ State* initialise()
 
 int main()
 {
-	bool stagnant = false;
+	bool stagnant = false, bichkoo = false;
 	double time_cap = 2;
 	cin >> ID >> M >> N >> time_limit;
 	--ID;
