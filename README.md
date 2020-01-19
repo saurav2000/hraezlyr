@@ -56,7 +56,7 @@ You can check you chrome version following the steps below:
   > `LOG` (optional) - The Log File.  
 
 ## Run Instructions
-Here are the sample instructions used to match two random players against each other over the server network.
+Here are the sample instructions used to match two random players against each other over the server network. The .py file can be replaced by the run.sh bash file which runs the C++ or java executable.
 
 ### Setup Server
 ```sh
