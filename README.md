@@ -1,10 +1,10 @@
-# Hræzlyr
-Simulator supporting a user interface for Cannon, an abstract strategy board game.
+# Hraezlyr
+Bot for Cannon, an abstract strategy board game and a simulator supporting a user interface for the game.
 
 ## Rules
 The rules of the original game can be found [here](https://nestorgames.com/rulebooks/CANNON_EN.pdf)
 
-### Piazza discussions:  
+### Rule Clarifications:  
 + The soldier can retreat back if and only if it is adjacent to an enemy soldier.
 + The soldier can kill an enemy soldier or a townhall in a retreat step.
 + Cannon shifts along its length cannot capture a soldier or a townhall.
@@ -133,7 +133,7 @@ This score will be based on the extent of victory. It is calculated as follows:
 | 1 |	0 |	8 |	2 |
 | 0 |	0 |	6 |	4 |
 | 1 |	1 |	6 |	4 |
-| 4 |	3 |	4 |	6 |
+| 0 |	1 |	4 |	6 |
 
 #### Stagnant Game
 
